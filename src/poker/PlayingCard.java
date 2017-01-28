@@ -20,7 +20,11 @@ public class PlayingCard {
 	}
 	
 	public String toString(){
-		return type + suit;
+		return type + suit + " " + faceValue + " " + gameValue;
+	}
+	
+	public String getType(){
+		return type;
 	}
 	
 	public char getSuit(){
@@ -36,9 +40,6 @@ public class PlayingCard {
 		
 	}
 	
-	
-	
-	
 	public static void main(String[] args) {
 		PlayingCard card = new PlayingCard("A", 'H', 1, 14);
 		
@@ -46,7 +47,19 @@ public class PlayingCard {
 		
 		System.out.println("Card: " + card.toString());
 		
+		char[] suits = {PlayingCard.HEARTS, PlayingCard.DIAMONDS, PlayingCard.SPADES, PlayingCard.CLUBS};
+		String[] types = {"A","2","3","4","5","6","7","8","9","10","J","Q","K"};
+		
+		int counter = 0;
+		for(int i = 0; i < suits.length; i++){
+			for(int j = 0; j < types.length; j++){
+				int gameValue = types[j] == "A" ? 14 : j + 1;
+				deck[counter++] = new PlayingCard(types[j], suits[i], j + 1, gameValue);
+			}
+		}
+		
+		for(int i = 0; i < deck.length; i++){
+			System.out.println(deck[i].toString());
+		}
 	}
-	
-	
 }
