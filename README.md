@@ -1,1 +1,1 @@
-# texas-holdem-twitter-bot
+# texas-holdem-bot
