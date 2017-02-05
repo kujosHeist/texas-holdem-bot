@@ -20,7 +20,7 @@ public class PlayingCard {
 	}
 	
 	public String toString(){
-		return type + suit + " " + faceValue + " " + gameValue;
+		return type + suit;
 	}
 	
 	public String getType(){

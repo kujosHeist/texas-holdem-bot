@@ -1,6 +1,7 @@
 package poker;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class DeckOfCards {
 
@@ -14,11 +15,20 @@ public class DeckOfCards {
 	}	
 	
 	public void shuffle(){
-
+		Random randrom = new Random();
+		for(int i = 0 ; i < deck.length * 2; i++){
+			int index1 = randrom.nextInt(52);
+			int index2 = randrom.nextInt(52);
+			
+			// swap card positions in deck
+			PlayingCard card = deck[index1];
+			deck[index1] = deck[index2];
+			deck[index2] = card;
+		}
 	}
 	
 	public PlayingCard dealNext(){
-		return deck[nextCardIndex];
+		return deck[nextCardIndex--];
 	}
 	
 	public void returnCard(PlayingCard discarded){
@@ -41,7 +51,13 @@ public class DeckOfCards {
 	}
 	
 	public static void main(String[] args) {
+		DeckOfCards deckOfCards = new DeckOfCards();
 		
+		deckOfCards.shuffle();
+		
+		for(int i = 0; i < 52; i++){
+			System.out.println(deckOfCards.dealNext());
+		}
 	}
 	
 }
