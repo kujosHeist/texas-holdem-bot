@@ -36,8 +36,7 @@ public class PlayingCard {
 	}
 	
 	public int getGameValue(){
-		return gameValue;
-		
+		return gameValue;	
 	}
 	
 	public static void main(String[] args) {
@@ -62,4 +61,6 @@ public class PlayingCard {
 			System.out.println(deck[i].toString());
 		}
 	}
+	
+	
 }
