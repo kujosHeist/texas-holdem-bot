@@ -14,10 +14,20 @@ public class HandOfCards {
 		for(int i = 0; i < CARDS_PER_HAND; i++){
 			cards[i] = deckOfCards.dealNext();
 		}
-	}	
-
+	}
+	
 	public static void main(String[] args) {
-
+		// TODO Auto-generated method stub
+		
+		DeckOfCards deck = new DeckOfCards();
+		deck.shuffle();
+		HandOfCards handOfCards = new HandOfCards(deck);
+		
+		PlayingCard[] hand = handOfCards.getCards();
+		
+		for(PlayingCard card: hand){
+			System.out.print(card + " ");
+		}
 	}
 
 }
