@@ -53,5 +53,42 @@ public class HandOfCards {
 	}
 	
 	
+	boolean isRoyalFlush(){
+		return true;
+	} 
+	
+	boolean isStraightFlush(){
+		return true;
+	}
+	boolean isFourOfAKind(){
+		return true;
+	}
+	
+	boolean isThreeOfAKind(){
+		return true;
+	}
+	
+	boolean isFullHouse(){
+		return true;
+	}
+	boolean isStraight(){
+		return true;
+	}
+	boolean isFlush(){
+		return true;
+	}
+	
+	boolean isTwoPair(){
+		return true;
+	}
+	
+	boolean isOnePair(){
+		return true;
+	}
+	
+	boolean isHighHand(){
+		return true;
+	}
+	
 
 }
