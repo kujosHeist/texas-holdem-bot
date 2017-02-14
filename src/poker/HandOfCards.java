@@ -14,7 +14,28 @@ public class HandOfCards {
 		for(int i = 0; i < CARDS_PER_HAND; i++){
 			cards[i] = deckOfCards.dealNext();
 		}
+		sort();
 	}
+	
+	private void sort(){
+		int i;
+		boolean flag = true;   
+		PlayingCard temp;   
+
+		while (flag){
+			flag= false; 
+			for( i=0;  i < cards.length -1;  i++ ){
+				if(cards[ i ].getGameValue() < cards[i+1].getGameValue()){   
+					temp = cards[i];   //swap elements
+					cards[i] = cards[i+1];
+					cards[i+1]= temp;
+					flag = true;              
+				} 
+			} 
+		}		
+	}
+	
+
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -28,6 +49,9 @@ public class HandOfCards {
 		for(PlayingCard card: hand){
 			System.out.print(card + " ");
 		}
+	
 	}
+	
+	
 
 }

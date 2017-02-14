@@ -12,7 +12,7 @@ public class PlayingCard {
 	public static final char SPADES = 'S';
 	public static final char CLUBS = 'C';
 	
-	public PlayingCard(String type, char suit, int faceValue, int gameValue){
+	public PlayingCard(String type, char suit, int faceValue, int gameValue) {
 		this.type = type;
 		this.suit = suit;
 		this.faceValue = faceValue;
