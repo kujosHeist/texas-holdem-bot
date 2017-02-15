@@ -51,12 +51,8 @@ public class HandOfCards {
 	}
 	public boolean isFourOfAKind(){
 		boolean isFourOfAKindFlag = false;
-		
-		int[] gameValuesCount = new int[TYPES_OF_CARDS];
-		
-		for (int i = 0; i < CARDS_PER_HAND; i++) {
-			gameValuesCount[cards[i].getGameValue()-2]++;
-		}
+
+		int[] gameValuesCount = getGameValuesCount();
 		
 		for (int i = 0; i < gameValuesCount.length; i++) {
 			if(gameValuesCount[i] == 4){
@@ -97,7 +93,6 @@ public class HandOfCards {
 				break;
 			}
 		}
-		
 		return isStraightFlag;
 	}
 	
@@ -127,6 +122,15 @@ public class HandOfCards {
 	
 	public boolean isHighHand(){
 		return true;
+	}
+	
+	private int[] getGameValuesCount(){
+		int[] gameValuesCount = new int[TYPES_OF_CARDS];
+		
+		for (int i = 0; i < CARDS_PER_HAND; i++) {
+			gameValuesCount[cards[i].getGameValue()-2]++;
+		}
+		return gameValuesCount;
 	}
 	
 	public static void main(String[] args) {
