@@ -123,7 +123,22 @@ public class HandOfCards {
 	}
 	
 	public boolean isTwoPair(){
-		return true;
+		boolean isTwoPairFlag = false;
+
+		int[] gameValuesCount = getGameValuesCount();
+		int pairs = 0;
+		
+		for (int i = 0; i < gameValuesCount.length; i++) {
+			if(gameValuesCount[i] == 2){
+				pairs++;
+				
+			}
+		}
+		if(pairs == 2){
+			isTwoPairFlag = true;
+		}
+		
+		return isTwoPairFlag;
 	}
 	
 	public boolean isOnePair(){
@@ -210,7 +225,7 @@ public class HandOfCards {
 	public static boolean checkCards(HandOfCards handOfCards){
 		PlayingCard[] hand = handOfCards.getCards();		
 	
-		if(handOfCards.isThreeOfAKind()){
+		if(handOfCards.isTwoPair()){
 			for(PlayingCard card: hand){
 				System.out.print(card + " ");
 			}			
