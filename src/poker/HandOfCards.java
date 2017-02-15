@@ -3,10 +3,11 @@ package poker;
 public class HandOfCards {
 	
 	private static int CARDS_PER_HAND = 5;
-	private static int TYPES_OF_CARDS = 13;
+	private static int TYPES_OF_CARDS = 13; // A 2 3 ... J Q K
 	private PlayingCard[] cards = new PlayingCard[CARDS_PER_HAND];
 	private DeckOfCards deckOfCards;
 	
+	// main constructor which deals 5 cards into HandOfCards
 	public HandOfCards(DeckOfCards deckOfCards){
 		this.deckOfCards = deckOfCards;
 		for(int i = 0; i < CARDS_PER_HAND; i++){
@@ -15,6 +16,7 @@ public class HandOfCards {
 		sort();
 	}
 	
+	// Extra constructor for testing specific types of hand
 	public HandOfCards(PlayingCard[] cards){
 		this.cards = cards;
 		sort();
@@ -24,51 +26,60 @@ public class HandOfCards {
 		return deckOfCards;
 	}
 	
-	public PlayingCard[] getCards(){
-		return cards;
-	}	
-	
+	// based on bubble sort, this method orders the cards from highest to lowest based on game value
 	private void sort(){
-		int i;
-		boolean flag = true;   
-		PlayingCard temp;   
-
-		while (flag){
-			flag= false; 
-			for( i=0;  i < cards.length -1;  i++ ){
-				if(cards[ i ].getGameValue() < cards[i+1].getGameValue()){   
-					temp = cards[i];   //swap elements
+		boolean sorted = false;   
+		
+		// keeps looping until cards in in correct order
+		while (!sorted){
+			sorted= true; 
+			PlayingCard temp;   
+			
+			for(int i=0;  i < cards.length -1;  i++){
+				
+				if(cards[i].getGameValue() < cards[i+1].getGameValue()){   
+					// if first card is lower then next card in array, then its not yet sorted
+					// so we set flag to false
+					sorted = false;
+					// then swap the cards positions in array
+					temp = cards[i];   
 					cards[i] = cards[i+1];
 					cards[i+1]= temp;
-					flag = true;              
 				} 
 			} 
 		}		
 	}
-	
+
+	// hand is a royal flush if it is straight flush and the last card in the array is a 10, 
+	// since cards are sorted from highest to lowest, then 10 must be last card
 	public boolean isRoyalFlush(){
-		// if we have a straight flush with the last card in the hand a 10, 
-		// then we have a royal flush, since cards are sorted from highest to lowest
 		return cards[CARDS_PER_HAND-1].getType() == "10" && isStraightFlush();
 	} 
 	
+	// hand is a straight flush if it is straight and a flush
 	public boolean isStraightFlush(){
 		return isStraight() && isFlush();
 	}
+	
+	
 	public boolean isFourOfAKind(){
 		boolean isFourOfAKindFlag = false;
-
+		
+		// returns an array where each item in the array is an int
+		// representing the number of that type of card in the hand
 		int[] gameValuesCount = getGameValuesCount();
 		
+		// loops through array and checks if there are four of any type
 		for (int i = 0; i < gameValuesCount.length; i++) {
 			if(gameValuesCount[i] == 4){
-				isFourOfAKindFlag = true;
+				isFourOfAKindFlag = true; // sets flag to true and breaks from loop
 				break;
 			}
 		}
 		return isFourOfAKindFlag;
 	}
 	
+	// similar to isFourOfAKind
 	public boolean isThreeOfAKind(){
 		boolean isTreeOfAKindFlag = false;
 
@@ -83,12 +94,15 @@ public class HandOfCards {
 		return isTreeOfAKindFlag ;
 	}
 	
+	// full house is a hand with a three of a kind and a pair
 	public boolean isFullHouse(){
 		return isThreeOfAKind() && isOnePair();
 	}
+	
 	public boolean isStraight(){
 		boolean isStraightFlag = true;
 		
+		// loops through hand and checks if each card one higher than the next card
 		for(int i = 0, j = 1; i < CARDS_PER_HAND - 1; i++, j++){
 			PlayingCard card1 = cards[i];
 			PlayingCard card2 = cards[j];
@@ -96,15 +110,17 @@ public class HandOfCards {
 			int gameValue1 = card1.getGameValue(); 
 			int gameValue2 = card2.getFaceValue();
 			
-			// this accounts for runs from low ACE to 5
+			// this accounts for runs from ACE to 5
 			// which after sorting will be in the order: A 5 4 3 2
 			if(card1.getType() == "A" && gameValue2 == 5){ 
 				continue;
 			}
 			
+			// checks if the the first card is one higher than the next card
 			if(gameValue1 == gameValue2 + 1){ 
 				continue;
 			}else{
+				// if not then we can set flag to false and break
 				isStraightFlag = false;
 				break;
 			}
@@ -112,14 +128,20 @@ public class HandOfCards {
 		return isStraightFlag;
 	}
 	
+	
 	public boolean isFlush(){
 		boolean isFlushFlag = true;
+		
+		// takes first card from the hand
 		PlayingCard card = cards[0];
 		
+		// loops through remaing cards
 		for(int i = 1; i < CARDS_PER_HAND; i++){
 			PlayingCard otherCard = cards[i];
 			
+			// checks is the suit of each remaining card the same as the suit of the first card
 			if(card.getSuit() != otherCard.getSuit()){
+				// if not we set flag to false and break, since all cards aren't of the same suit
 				isFlushFlag = false;
 				break;
 			}
@@ -131,15 +153,18 @@ public class HandOfCards {
 	public boolean isTwoPair(){
 		boolean isTwoPairFlag = false;
 
+		// gets array of the number of each type of cards
 		int[] gameValuesCount = getGameValuesCount();
-		int pairs = 0;
+		
+		int pairs = 0; // keeps track of number of pairs
 		
 		for (int i = 0; i < gameValuesCount.length; i++) {
-			if(gameValuesCount[i] == 2){
+			if(gameValuesCount[i] == 2){ // if pair is found we increment variable
 				pairs++;
 				
 			}
 		}
+		// returns true if exactly two pairs
 		if(pairs == 2){
 			isTwoPairFlag = true;
 		}
@@ -147,6 +172,7 @@ public class HandOfCards {
 		return isTwoPairFlag;
 	}
 	
+	// similar to isTwoPair except checks for exactly one pair
 	public boolean isOnePair(){
 		boolean isOnePairFlag = false;
 
@@ -165,12 +191,15 @@ public class HandOfCards {
 		return isOnePairFlag;
 	}
 	
+	
 	public boolean isHighHand(){
 		boolean isHighHand = true;
 
 		int[] gameValuesCount = getGameValuesCount();
 	
 		for (int i = 0; i < gameValuesCount.length; i++) {
+			
+			// checks if there is more than 1 of any type of card in the hand, if so it returns false
 			if(gameValuesCount[i] > 1){
 				isHighHand = false;
 			}
@@ -179,6 +208,7 @@ public class HandOfCards {
 		return isHighHand;		
 	}
 	
+	// prints out the hand
 	public String toString(){
 		String handString = "";
 		for(PlayingCard card: cards){
@@ -187,11 +217,16 @@ public class HandOfCards {
 		return handString;
 	}
 	
+	// returns an array where each item in the array is an int
+	// representing the number of that type of card in the hand
 	private int[] getGameValuesCount(){
 		int[] gameValuesCount = new int[TYPES_OF_CARDS];
 		
 		for (int i = 0; i < CARDS_PER_HAND; i++) {
-			gameValuesCount[cards[i].getGameValue()-2]++;
+			// index subtracted by one since face value go from 1-14, and our array goes from 0-13
+			int index = cards[i].getFaceValue()-1;  
+			// increments the number of this cards face value by 1
+			gameValuesCount[index]++;  
 		}
 		return gameValuesCount;
 	}
@@ -201,20 +236,42 @@ public class HandOfCards {
 		HandOfCards handOfCards;
 		
 		
-		int count = 0;
+		int count = 0;	
 		int iterations = 10000;
+		
+		// deals 10000 hands and checks for type of hand
 		for(int i = 0; i < iterations; i++){
 			deck.shuffle();
 			handOfCards = new HandOfCards(deck);
-			boolean result = checkCards(handOfCards);
+					
+			// checks if hand is a tree of a kind
+			boolean result = checkCards(handOfCards, "FourOfAKind");
 			if(result){
 				count++;
-			}
-			
+			}				
 		}
-		System.out.println();
-		System.out.println(count + " out of " + iterations + " hands");
 		
+		System.out.println();
+		System.out.println(count + " out of " + iterations + " hands have a FourOfAKind");		
+		System.out.println();
+		
+		count = 0;	
+		// deals 10000 hands and checks for type of hand
+		for(int i = 0; i < iterations; i++){
+			deck.shuffle();
+			handOfCards = new HandOfCards(deck);
+					
+			// checks if hand is a tree of a kind
+			boolean result = checkCards(handOfCards, "Straight");
+			if(result){
+				count++;
+			}				
+		}
+		
+		System.out.println();
+		System.out.println(count + " out of " + iterations + " hands have a Straight");			
+		
+		// commented out code shows example of testing a specific hand of cards
 		/*
 		handOfCards = new HandOfCards(
 			new PlayingCard[]{
@@ -225,50 +282,83 @@ public class HandOfCards {
 				new PlayingCard("10", 'H', 10, 10)
 		});
 		checkCards(handOfCards);
-		
-		
-		handOfCards = new HandOfCards(
-			new PlayingCard[]{
-				new PlayingCard("A", 'H', 1, 14),
-				new PlayingCard("A", 'C', 1, 14),
-				new PlayingCard("2", 'H', 2, 2),
-				new PlayingCard("3", 'H', 3, 3),
-				new PlayingCard("4", 'H', 4, 4)
-		});
-		checkCards(handOfCards);			
-		
-		handOfCards = new HandOfCards(
-			new PlayingCard[]{
-				new PlayingCard("A", 'H', 1, 14),
-				new PlayingCard("2", 'C', 2, 2),
-				new PlayingCard("3", 'H', 3, 3),
-				new PlayingCard("4", 'H', 4, 4),
-				new PlayingCard("5", 'H', 5, 5)
-		});		
-		checkCards(handOfCards);
-		
-		handOfCards = new HandOfCards(
-			new PlayingCard[]{
-				new PlayingCard("2", 'H', 1, 2),
-				new PlayingCard("3", 'C', 3, 3),
-				new PlayingCard("3", 'H', 3, 3),
-				new PlayingCard("4", 'H', 4, 4),
-				new PlayingCard("5", 'H', 5, 5)
-		});		
-		checkCards(handOfCards);			
-
-		*/
+		*/		
 	}	
 	
-	public static boolean checkCards(HandOfCards handOfCards){
-		if(handOfCards.isHighHand()){
-			System.out.println(handOfCards.toString());
-			return true;
-		}else{
-			return false;
+	// static method the type of hand
+	public static boolean checkCards(HandOfCards handOfCards, String handType){
+		
+		boolean typeOfHandFlag = false;
+		if(handType == "HighHand"){
+			if(handOfCards.isHighHand()){
+				typeOfHandFlag = true;
+				System.out.println(handOfCards.toString());
+			}
+			
+		}else if(handType == "OnePair"){
+			if(handOfCards.isOnePair()){
+				typeOfHandFlag = true;
+				System.out.println(handOfCards.toString());
+			}
+			
+		}else if(handType == "TwoPair"){
+			if(handOfCards.isTwoPair()){
+				typeOfHandFlag = true;
+				System.out.println(handOfCards.toString());
+			}
+			
+		}else if(handType.equals("ThreeOfAKind")){
+			if(handOfCards.isThreeOfAKind()){
+				typeOfHandFlag = true;
+				System.out.println(handOfCards.toString());
+			}
+			
+		}else if(handType.equals("Straight")){
+			if(handOfCards.isStraight()){
+				typeOfHandFlag = true;
+				System.out.println(handOfCards.toString());
+			}		
 		}
 		
+		else if(handType.equals("Flush")){
+			if(handOfCards.isFlush()){
+				typeOfHandFlag = true;
+				System.out.println(handOfCards.toString());
+			}		
+		}
 		
+		else if(handType.equals("FullHouse")){
+			if(handOfCards.isFullHouse()){
+				typeOfHandFlag = true;
+				System.out.println(handOfCards.toString());
+			}			
+		}
+		
+		else if(handType.equals("FourOfAKind")){
+			if(handOfCards.isFourOfAKind()){
+				typeOfHandFlag = true;
+				System.out.println(handOfCards.toString());
+			}			
+		}
+		
+		else if(handType.equals("StraightFlush")){
+			if(handOfCards.isStraightFlush()){
+				typeOfHandFlag = true;
+				System.out.println(handOfCards.toString());
+			}		
+		}
+		
+		else if(handType.equals("RoyalFlush")){
+			if(handOfCards.isRoyalFlush()){
+				typeOfHandFlag = true;
+				System.out.println(handOfCards.toString());
+			}			
+		}		
+		
+
+	
+		return typeOfHandFlag;
+
 	}
 
 }
