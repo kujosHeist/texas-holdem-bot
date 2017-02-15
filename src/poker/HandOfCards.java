@@ -46,7 +46,8 @@ public class HandOfCards {
 	} 
 	
 	public boolean isStraightFlush(){
-		return true;
+		
+		return isStraight() && isFlush();
 	}
 	public boolean isFourOfAKind(){
 		return true;
@@ -118,7 +119,7 @@ public class HandOfCards {
 		DeckOfCards deck = new DeckOfCards();
 		HandOfCards handOfCards;
 		
-		for(int i = 0; i < 1000; i++){
+		for(int i = 0; i < 100000; i++){
 			deck.shuffle();
 			handOfCards = new HandOfCards(deck);
 			checkCards(handOfCards);
@@ -171,7 +172,7 @@ public class HandOfCards {
 	public static void checkCards(HandOfCards handOfCards){
 		PlayingCard[] hand = handOfCards.getCards();		
 	
-		if(handOfCards.isFlush()){
+		if(handOfCards.isStraightFlush()){
 			for(PlayingCard card: hand){
 				System.out.print(card + " ");
 			}			
