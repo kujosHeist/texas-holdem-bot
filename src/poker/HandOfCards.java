@@ -160,7 +160,25 @@ public class HandOfCards {
 	}
 	
 	public boolean isHighHand(){
-		return true;
+		boolean isHighHand = true;
+
+		int[] gameValuesCount = getGameValuesCount();
+	
+		for (int i = 0; i < gameValuesCount.length; i++) {
+			if(gameValuesCount[i] > 1){
+				isHighHand = false;
+			}
+		}
+		
+		return isHighHand;		
+	}
+	
+	public String toString(){
+		String handString = "";
+		for(PlayingCard card: cards){
+			handString += card.toString() + " ";
+		}	
+		return handString;
 	}
 	
 	private int[] getGameValuesCount(){
@@ -237,14 +255,11 @@ public class HandOfCards {
 	}	
 	
 	public static boolean checkCards(HandOfCards handOfCards){
-		PlayingCard[] hand = handOfCards.getCards();		
-	
-		if(handOfCards.isFullHouse()){
-			for(PlayingCard card: hand){
-				System.out.print(card + " ");
-			}			
 			
-			System.out.println();
+	
+		if(handOfCards.isHighHand()){
+			System.out.println(handOfCards.toString());
+			
 			return true;
 		}else{
 			return false;
