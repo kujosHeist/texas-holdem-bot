@@ -40,6 +40,8 @@ public class HandOfCards {
 	}
 	
 	public boolean isRoyalFlush(){
+		
+		
 		return true;
 	} 
 	
@@ -58,7 +60,7 @@ public class HandOfCards {
 		return true;
 	}
 	public boolean isStraight(){
-		boolean straightFlag = true;
+		boolean isStraightFlag = true;
 		
 		for(int i = 0, j = 1; i < CARDS_PER_HAND - 1; i++, j++){
 			PlayingCard card1 = cards[i];
@@ -76,16 +78,28 @@ public class HandOfCards {
 			if(gameValue1 == gameValue2 + 1){ 
 				continue;
 			}else{
-				straightFlag = false;
+				isStraightFlag = false;
 				break;
 			}
 		}
 		
-		return straightFlag;
+		return isStraightFlag;
 	}
 	
 	public boolean isFlush(){
-		return true;
+		boolean isFlushFlag = true;
+		PlayingCard card = cards[0];
+		
+		for(int i = 1; i < CARDS_PER_HAND; i++){
+			PlayingCard otherCard = cards[i];
+			
+			if(card.getSuit() != otherCard.getSuit()){
+				isFlushFlag = false;
+				break;
+			}
+		}
+		
+		return isFlushFlag;
 	}
 	
 	public boolean isTwoPair(){
@@ -114,7 +128,7 @@ public class HandOfCards {
 		handOfCards = new HandOfCards(
 			new PlayingCard[]{
 				new PlayingCard("A", 'H', 1, 14),
-				new PlayingCard("K", 'C', 13, 13),
+				new PlayingCard("K", 'H', 13, 13),
 				new PlayingCard("Q", 'H', 12, 12),
 				new PlayingCard("J", 'H', 11, 11),
 				new PlayingCard("10", 'H', 10, 10)
@@ -156,10 +170,8 @@ public class HandOfCards {
 	
 	public static void checkCards(HandOfCards handOfCards){
 		PlayingCard[] hand = handOfCards.getCards();		
-		
-
-		
-		if(handOfCards.isStraight()){
+	
+		if(handOfCards.isFlush()){
 			for(PlayingCard card: hand){
 				System.out.print(card + " ");
 			}			
