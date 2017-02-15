@@ -40,9 +40,9 @@ public class HandOfCards {
 	}
 	
 	public boolean isRoyalFlush(){
-		
-		
-		return true;
+		// if we have a straight flush with the last card in the hand a 10, 
+		// then we have a royal flush, since cards are sorted from highest to lowest
+		return cards[CARDS_PER_HAND-1].getType() == "10" && isStraightFlush();
 	} 
 	
 	public boolean isStraightFlush(){
@@ -172,7 +172,7 @@ public class HandOfCards {
 	public static void checkCards(HandOfCards handOfCards){
 		PlayingCard[] hand = handOfCards.getCards();		
 	
-		if(handOfCards.isStraightFlush()){
+		if(handOfCards.isRoyalFlush()){
 			for(PlayingCard card: hand){
 				System.out.print(card + " ");
 			}			
