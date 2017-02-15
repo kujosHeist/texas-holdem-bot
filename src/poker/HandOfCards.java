@@ -3,6 +3,7 @@ package poker;
 public class HandOfCards {
 	
 	private static int CARDS_PER_HAND = 5;
+	private static int TYPES_OF_CARDS = 13;
 	private PlayingCard[] cards = new PlayingCard[CARDS_PER_HAND]; 
 	
 	public HandOfCards(DeckOfCards deckOfCards){
@@ -46,11 +47,24 @@ public class HandOfCards {
 	} 
 	
 	public boolean isStraightFlush(){
-		
 		return isStraight() && isFlush();
 	}
 	public boolean isFourOfAKind(){
-		return true;
+		boolean isFourOfAKindFlag = false;
+		
+		int[] gameValuesCount = new int[TYPES_OF_CARDS];
+		
+		for (int i = 0; i < CARDS_PER_HAND; i++) {
+			gameValuesCount[cards[i].getGameValue()-2]++;
+		}
+		
+		for (int i = 0; i < gameValuesCount.length; i++) {
+			if(gameValuesCount[i] == 4){
+				isFourOfAKindFlag = true;
+				break;
+			}
+		}
+		return isFourOfAKindFlag;
 	}
 	
 	public boolean isThreeOfAKind(){
@@ -119,7 +133,7 @@ public class HandOfCards {
 		DeckOfCards deck = new DeckOfCards();
 		HandOfCards handOfCards;
 		
-		for(int i = 0; i < 100000; i++){
+		for(int i = 0; i < 10000; i++){
 			deck.shuffle();
 			handOfCards = new HandOfCards(deck);
 			checkCards(handOfCards);
@@ -172,7 +186,7 @@ public class HandOfCards {
 	public static void checkCards(HandOfCards handOfCards){
 		PlayingCard[] hand = handOfCards.getCards();		
 	
-		if(handOfCards.isRoyalFlush()){
+		if(handOfCards.isFourOfAKind()){
 			for(PlayingCard card: hand){
 				System.out.print(card + " ");
 			}			
