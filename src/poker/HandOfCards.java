@@ -78,7 +78,7 @@ public class HandOfCards {
 	}
 	
 	public boolean isFullHouse(){
-		return true;
+		return isThreeOfAKind() && isOnePair();
 	}
 	public boolean isStraight(){
 		boolean isStraightFlag = true;
@@ -239,7 +239,7 @@ public class HandOfCards {
 	public static boolean checkCards(HandOfCards handOfCards){
 		PlayingCard[] hand = handOfCards.getCards();		
 	
-		if(handOfCards.isOnePair()){
+		if(handOfCards.isFullHouse()){
 			for(PlayingCard card: hand){
 				System.out.print(card + " ");
 			}			
