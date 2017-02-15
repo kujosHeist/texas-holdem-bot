@@ -142,7 +142,21 @@ public class HandOfCards {
 	}
 	
 	public boolean isOnePair(){
-		return true;
+		boolean isOnePairFlag = false;
+
+		int[] gameValuesCount = getGameValuesCount();
+		int pairs = 0;
+		
+		for (int i = 0; i < gameValuesCount.length; i++) {
+			if(gameValuesCount[i] == 2){
+				pairs++;
+			}
+		}
+		if(pairs == 1){
+			isOnePairFlag = true;
+		}
+		
+		return isOnePairFlag;
 	}
 	
 	public boolean isHighHand(){
@@ -225,7 +239,7 @@ public class HandOfCards {
 	public static boolean checkCards(HandOfCards handOfCards){
 		PlayingCard[] hand = handOfCards.getCards();		
 	
-		if(handOfCards.isTwoPair()){
+		if(handOfCards.isOnePair()){
 			for(PlayingCard card: hand){
 				System.out.print(card + " ");
 			}			
