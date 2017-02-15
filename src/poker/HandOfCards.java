@@ -64,7 +64,17 @@ public class HandOfCards {
 	}
 	
 	public boolean isThreeOfAKind(){
-		return true;
+		boolean isTreeOfAKindFlag = false;
+
+		int[] gameValuesCount = getGameValuesCount();
+		
+		for (int i = 0; i < gameValuesCount.length; i++) {
+			if(gameValuesCount[i] == 3){
+				isTreeOfAKindFlag  = true;
+				break;
+			}
+		}
+		return isTreeOfAKindFlag ;
 	}
 	
 	public boolean isFullHouse(){
@@ -137,13 +147,22 @@ public class HandOfCards {
 		DeckOfCards deck = new DeckOfCards();
 		HandOfCards handOfCards;
 		
-		for(int i = 0; i < 10000; i++){
+		
+		int count = 0;
+		int iterations = 10000;
+		for(int i = 0; i < iterations; i++){
 			deck.shuffle();
 			handOfCards = new HandOfCards(deck);
-			checkCards(handOfCards);
+			boolean result = checkCards(handOfCards);
+			if(result){
+				count++;
+			}
+			
 		}
+		System.out.println();
+		System.out.println(count + " out of " + iterations + " hands");
 		
-		
+		/*
 		handOfCards = new HandOfCards(
 			new PlayingCard[]{
 				new PlayingCard("A", 'H', 1, 14),
@@ -153,6 +172,7 @@ public class HandOfCards {
 				new PlayingCard("10", 'H', 10, 10)
 		});
 		checkCards(handOfCards);
+		
 		
 		handOfCards = new HandOfCards(
 			new PlayingCard[]{
@@ -184,21 +204,22 @@ public class HandOfCards {
 		});		
 		checkCards(handOfCards);			
 
-		
+		*/
 	}	
 	
-	public static void checkCards(HandOfCards handOfCards){
+	public static boolean checkCards(HandOfCards handOfCards){
 		PlayingCard[] hand = handOfCards.getCards();		
 	
-		if(handOfCards.isFourOfAKind()){
+		if(handOfCards.isThreeOfAKind()){
 			for(PlayingCard card: hand){
 				System.out.print(card + " ");
 			}			
-			System.out.print("[True]");
+			
 			System.out.println();
+			return true;
 		}else{
-			//System.out.println("[False]");
-		}		
+			return false;
+		}
 		
 		
 	}
