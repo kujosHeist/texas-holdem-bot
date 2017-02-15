@@ -285,7 +285,7 @@ public class HandOfCards {
 		*/		
 	}	
 	
-	// static method the type of hand
+	// static method checking the type of hand
 	public static boolean checkCards(HandOfCards handOfCards, String handType){
 		
 		boolean typeOfHandFlag = false;
@@ -355,10 +355,7 @@ public class HandOfCards {
 			}			
 		}		
 		
-
-	
 		return typeOfHandFlag;
-
 	}
 
 }
