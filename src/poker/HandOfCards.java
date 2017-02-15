@@ -4,9 +4,11 @@ public class HandOfCards {
 	
 	private static int CARDS_PER_HAND = 5;
 	private static int TYPES_OF_CARDS = 13;
-	private PlayingCard[] cards = new PlayingCard[CARDS_PER_HAND]; 
+	private PlayingCard[] cards = new PlayingCard[CARDS_PER_HAND];
+	private DeckOfCards deckOfCards;
 	
 	public HandOfCards(DeckOfCards deckOfCards){
+		this.deckOfCards = deckOfCards;
 		for(int i = 0; i < CARDS_PER_HAND; i++){
 			cards[i] = deckOfCards.dealNext();
 		}
@@ -16,6 +18,10 @@ public class HandOfCards {
 	public HandOfCards(PlayingCard[] cards){
 		this.cards = cards;
 		sort();
+	}
+	
+	public DeckOfCards getDeckOfCards(){
+		return deckOfCards;
 	}
 	
 	public PlayingCard[] getCards(){
@@ -255,11 +261,8 @@ public class HandOfCards {
 	}	
 	
 	public static boolean checkCards(HandOfCards handOfCards){
-			
-	
 		if(handOfCards.isHighHand()){
 			System.out.println(handOfCards.toString());
-			
 			return true;
 		}else{
 			return false;
