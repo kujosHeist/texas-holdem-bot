@@ -2,6 +2,20 @@ package poker;
 
 public class HandOfCards {
 	
+	private static String HIGH_HAND = "HighHand";
+	private static String ONE_PAIR = "OnePair";
+	private static String TWO_PAIR = "TwoPair";
+	private static String THREE_OF_A_KIND = "ThreeOfAKind";
+	private static String STRAIGHT = "Straight";
+	private static String FLUSH = "Flush";
+	private static String FULL_HOUSE = "FullHouse";
+	private static String FOUR_OF_A_KIND = "FourOfAKind";
+	private static String STRAIGHT_FLUSH = "StraightFlush";
+	private static String ROYAL_FLUSH = "RoyalFlush";
+	
+	
+	
+	
 	private static int CARDS_PER_HAND = 5;
 	private static int TYPES_OF_CARDS = 13; // A 2 3 ... J Q K
 	private PlayingCard[] cards = new PlayingCard[CARDS_PER_HAND];
