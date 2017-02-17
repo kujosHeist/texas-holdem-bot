@@ -232,58 +232,58 @@ public class HandOfCards {
 	}
 	
 	public static void main(String[] args) {
+		long startTime = System.currentTimeMillis();
+		
 		DeckOfCards deck = new DeckOfCards();
-		HandOfCards handOfCards;
+		int iterations = 1000000;
+		
+		runMultipleHandTypeTest(iterations, deck, "HighHand");
+		runMultipleHandTypeTest(iterations, deck, "OnePair");
+		runMultipleHandTypeTest(iterations, deck, "TwoPair");
+		runMultipleHandTypeTest(iterations, deck, "ThreeOfAKind");
+		runMultipleHandTypeTest(iterations, deck, "Straight");
+		runMultipleHandTypeTest(iterations, deck, "Flush");
+		runMultipleHandTypeTest(iterations, deck, "FullHouse");
+		runMultipleHandTypeTest(iterations, deck, "FourOfAKind");
+		runMultipleHandTypeTest(iterations, deck, "StraightFlush");
+		runMultipleHandTypeTest(iterations, deck, "RoyalFlush");
 		
 		
-		int count = 0;	
-		int iterations = 10000;
-		
-		// deals 10000 hands and checks for type of hand
-		for(int i = 0; i < iterations; i++){
-			deck.shuffle();
-			handOfCards = new HandOfCards(deck);
-					
-			// checks if hand is a tree of a kind
-			boolean result = checkCards(handOfCards, "FourOfAKind");
-			if(result){
-				count++;
-			}				
-		}
-		
-		System.out.println();
-		System.out.println(count + " out of " + iterations + " hands have a FourOfAKind");		
-		System.out.println();
-		
-		count = 0;	
-		// deals 10000 hands and checks for type of hand
-		for(int i = 0; i < iterations; i++){
-			deck.shuffle();
-			handOfCards = new HandOfCards(deck);
-					
-			// checks if hand is a tree of a kind
-			boolean result = checkCards(handOfCards, "Straight");
-			if(result){
-				count++;
-			}				
-		}
-		
-		System.out.println();
-		System.out.println(count + " out of " + iterations + " hands have a Straight");			
-		
-		// commented out code shows example of testing a specific hand of cards
-		/*
-		handOfCards = new HandOfCards(
-			new PlayingCard[]{
+		long endTime = System.currentTimeMillis();
+		long timeDifference = endTime - startTime;
+		System.out.println("Test took " + (float)timeDifference/1000.0 + " to run");
+	}	
+	
+	public static boolean runCustomHandTypeTest(){
+		HandOfCards handOfCards = new HandOfCards(
+				new PlayingCard[]{
 				new PlayingCard("A", 'H', 1, 14),
 				new PlayingCard("K", 'H', 13, 13),
 				new PlayingCard("Q", 'H', 12, 12),
 				new PlayingCard("J", 'H', 11, 11),
 				new PlayingCard("10", 'H', 10, 10)
 		});
-		checkCards(handOfCards);
-		*/		
-	}	
+		return HandOfCards.checkCards(handOfCards, "Straight");		
+	}
+	
+	public static void runMultipleHandTypeTest(int iterations, DeckOfCards deck, String handType){
+		int count = 0;	
+		
+		// deals 10000 hands and checks for type of hand
+		for(int i = 0; i < iterations; i++){
+			deck.shuffle();
+			HandOfCards handOfCards = new HandOfCards(deck);
+					
+			// checks if hand is a tree of a kind
+			boolean result = checkCards(handOfCards, handType);
+			if(result){
+				count++;
+			}				
+		}
+		
+		
+		System.out.println(count + " out of " + iterations + " hands have a " + handType);				
+	}
 	
 	// static method checking the type of hand
 	public static boolean checkCards(HandOfCards handOfCards, String handType){
@@ -292,69 +292,58 @@ public class HandOfCards {
 		if(handType == "HighHand"){
 			if(handOfCards.isHighHand()){
 				typeOfHandFlag = true;
-				System.out.println(handOfCards.toString());
 			}
 			
 		}else if(handType == "OnePair"){
 			if(handOfCards.isOnePair()){
 				typeOfHandFlag = true;
-				System.out.println(handOfCards.toString());
 			}
 			
 		}else if(handType == "TwoPair"){
 			if(handOfCards.isTwoPair()){
 				typeOfHandFlag = true;
-				System.out.println(handOfCards.toString());
 			}
 			
 		}else if(handType.equals("ThreeOfAKind")){
 			if(handOfCards.isThreeOfAKind()){
 				typeOfHandFlag = true;
-				System.out.println(handOfCards.toString());
 			}
 			
 		}else if(handType.equals("Straight")){
 			if(handOfCards.isStraight()){
 				typeOfHandFlag = true;
-				System.out.println(handOfCards.toString());
 			}		
 		}
 		
 		else if(handType.equals("Flush")){
 			if(handOfCards.isFlush()){
 				typeOfHandFlag = true;
-				System.out.println(handOfCards.toString());
 			}		
 		}
 		
 		else if(handType.equals("FullHouse")){
 			if(handOfCards.isFullHouse()){
 				typeOfHandFlag = true;
-				System.out.println(handOfCards.toString());
 			}			
 		}
 		
 		else if(handType.equals("FourOfAKind")){
 			if(handOfCards.isFourOfAKind()){
 				typeOfHandFlag = true;
-				System.out.println(handOfCards.toString());
 			}			
 		}
 		
 		else if(handType.equals("StraightFlush")){
 			if(handOfCards.isStraightFlush()){
 				typeOfHandFlag = true;
-				System.out.println(handOfCards.toString());
 			}		
 		}
 		
 		else if(handType.equals("RoyalFlush")){
 			if(handOfCards.isRoyalFlush()){
 				typeOfHandFlag = true;
-				System.out.println(handOfCards.toString());
 			}			
 		}		
-		
 		return typeOfHandFlag;
 	}
 
