@@ -2,19 +2,16 @@ package poker;
 
 public class HandOfCards {
 	
-	private static String HIGH_HAND = "HighHand";
-	private static String ONE_PAIR = "OnePair";
-	private static String TWO_PAIR = "TwoPair";
-	private static String THREE_OF_A_KIND = "ThreeOfAKind";
-	private static String STRAIGHT = "Straight";
-	private static String FLUSH = "Flush";
-	private static String FULL_HOUSE = "FullHouse";
-	private static String FOUR_OF_A_KIND = "FourOfAKind";
-	private static String STRAIGHT_FLUSH = "StraightFlush";
-	private static String ROYAL_FLUSH = "RoyalFlush";
-	
-	
-	
+	public static int HIGH_HAND = 0;
+	public static int ONE_PAIR = 1;
+	public static int TWO_PAIR = 2;
+	public static int THREE_OF_A_KIND = 3;
+	public static int STRAIGHT = 4;
+	public static int FLUSH = 5;
+	public static int FULL_HOUSE = 6;
+	public static int FOUR_OF_A_KIND = 7;
+	public static int STRAIGHT_FLUSH = 8;
+	public static int ROYAL_FLUSH = 9;	
 	
 	private static int CARDS_PER_HAND = 5;
 	private static int TYPES_OF_CARDS = 13; // A 2 3 ... J Q K
@@ -243,6 +240,10 @@ public class HandOfCards {
 			gameValuesCount[index]++;  
 		}
 		return gameValuesCount;
+	}
+	
+	public int gameValue(){
+		return 0;
 	}
 	
 	public static void main(String[] args) {
