@@ -81,7 +81,7 @@ public class HandOfCards {
 		
 		// returns an array where each item in the array is an int
 		// representing the number of that type of card in the hand
-		int[] gameValuesCount = getGameValuesCount();
+		int[] gameValuesCount = getFaceValueCount();
 		
 		// loops through array and checks if there are four of any type
 		for (int i = 0; i < gameValuesCount.length; i++) {
@@ -97,7 +97,7 @@ public class HandOfCards {
 	public boolean isThreeOfAKind(){
 		boolean isTreeOfAKindFlag = false;
 
-		int[] gameValuesCount = getGameValuesCount();
+		int[] gameValuesCount = getFaceValueCount();
 		
 		for (int i = 0; i < gameValuesCount.length; i++) {
 			if(gameValuesCount[i] == 3){
@@ -168,7 +168,7 @@ public class HandOfCards {
 		boolean isTwoPairFlag = false;
 
 		// gets array of the number of each type of cards
-		int[] gameValuesCount = getGameValuesCount();
+		int[] gameValuesCount = getFaceValueCount();
 		
 		int pairs = 0; // keeps track of number of pairs
 		
@@ -190,7 +190,7 @@ public class HandOfCards {
 	public boolean isOnePair(){
 		boolean isOnePairFlag = false;
 
-		int[] gameValuesCount = getGameValuesCount();
+		int[] gameValuesCount = getFaceValueCount();
 		int pairs = 0;
 		
 		for (int i = 0; i < gameValuesCount.length; i++) {
@@ -209,7 +209,7 @@ public class HandOfCards {
 	public boolean isHighHand(){
 		boolean isHighHand = true;
 
-		int[] gameValuesCount = getGameValuesCount();
+		int[] gameValuesCount = getFaceValueCount();
 	
 		for (int i = 0; i < gameValuesCount.length; i++) {
 			
@@ -233,7 +233,7 @@ public class HandOfCards {
 	
 	// returns an array where each item in the array is an int
 	// representing the number of that type of card in the hand
-	private int[] getGameValuesCount(){
+	private int[] getFaceValueCount(){
 		int[] gameValuesCount = new int[TYPES_OF_CARDS];
 		
 		for (int i = 0; i < CARDS_PER_HAND; i++) {
@@ -245,16 +245,29 @@ public class HandOfCards {
 		return gameValuesCount;
 	}
 	
-	public int gameValue(){
-		return 0;
+	public int getGameValue(){
+		Type handType = getType();
+		int defaultHandValue = PokerHand.getDefaultHandValue(handType);
+		return defaultHandValue;
 	}
 	
 	public static void main(String[] args) {	
 		long startTime = System.currentTimeMillis();
 		
 		DeckOfCards deck = new DeckOfCards();
-		int iterations = 1000;
 		
+		
+		for (int i = 0; i < 10; i++) {
+			deck.shuffle();
+			HandOfCards handOfCards = new HandOfCards(deck);
+			System.out.println(handOfCards.toString());
+			System.out.println(handOfCards.getGameValue());
+			
+		}
+		
+		
+		/*
+		int iterations = 1000;
 		runMultipleHandTypeTest(iterations, deck, Type.HighHand);
 		runMultipleHandTypeTest(iterations, deck, Type.OnePair);
 		runMultipleHandTypeTest(iterations, deck, Type.TwoPair);
@@ -265,6 +278,7 @@ public class HandOfCards {
 		runMultipleHandTypeTest(iterations, deck, Type.FourOfAKind);
 		runMultipleHandTypeTest(iterations, deck, Type.StraightFlush);
 		runMultipleHandTypeTest(iterations, deck, Type.RoyalFlush);
+		*/
 		
 		
 		long endTime = System.currentTimeMillis();
@@ -299,9 +313,43 @@ public class HandOfCards {
 			}				
 		}
 		
-		
 		System.out.println(count + " out of " + iterations + " hands have a " + handType);				
 	}
+	
+	
+	// returns type pof 
+	public Type getType(){
+		if(isRoyalFlush()){
+			return Type.RoyalFlush;
+		}
+		else if(isStraightFlush()){
+			return Type.StraightFlush;
+		}		
+		else if(isFourOfAKind()){
+			return Type.FourOfAKind;
+		}		
+		else if(isFullHouse()){
+			return Type.FullHouse;
+		}	
+		else if(isFlush()){
+			return Type.Flush;
+		}				
+		else if(isStraight()){
+			return Type.Straight;
+		}	
+		else if(isThreeOfAKind()){
+			return Type.ThreeOfAKind;
+		}	
+		else if(isTwoPair()){
+			return Type.TwoPair;
+		}		
+		else if(isOnePair()){
+			return Type.OnePair;
+		}		
+		else{
+			return Type.HighHand;
+		}
+	}	
 	
 	// static method checking the type of hand
 	public static boolean checkCards(HandOfCards handOfCards, Type handType){
