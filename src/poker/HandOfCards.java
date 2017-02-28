@@ -1,7 +1,7 @@
 package poker;
 
 public class HandOfCards {
-	
+	/*
 	public static int HIGH_HAND = 0;
 	public static int ONE_PAIR = 1;
 	public static int TWO_PAIR = 2;
@@ -11,7 +11,13 @@ public class HandOfCards {
 	public static int FULL_HOUSE = 6;
 	public static int FOUR_OF_A_KIND = 7;
 	public static int STRAIGHT_FLUSH = 8;
-	public static int ROYAL_FLUSH = 9;	
+	public static int ROYAL_FLUSH = 10;
+	*/
+	
+	public static enum Type {HighHand, OnePair, TwoPair, ThreeOfAKind, Straight, Flush, FullHouse, FourOfAKind, StraightFlush, RoyalFlush};
+	
+	
+	
 	
 	private static int CARDS_PER_HAND = 5;
 	private static int TYPES_OF_CARDS = 13; // A 2 3 ... J Q K
@@ -250,18 +256,18 @@ public class HandOfCards {
 		long startTime = System.currentTimeMillis();
 		
 		DeckOfCards deck = new DeckOfCards();
-		int iterations = 1000000;
+		int iterations = 1000;
 		
-		runMultipleHandTypeTest(iterations, deck, "HighHand");
-		runMultipleHandTypeTest(iterations, deck, "OnePair");
-		runMultipleHandTypeTest(iterations, deck, "TwoPair");
-		runMultipleHandTypeTest(iterations, deck, "ThreeOfAKind");
-		runMultipleHandTypeTest(iterations, deck, "Straight");
-		runMultipleHandTypeTest(iterations, deck, "Flush");
-		runMultipleHandTypeTest(iterations, deck, "FullHouse");
-		runMultipleHandTypeTest(iterations, deck, "FourOfAKind");
-		runMultipleHandTypeTest(iterations, deck, "StraightFlush");
-		runMultipleHandTypeTest(iterations, deck, "RoyalFlush");
+		runMultipleHandTypeTest(iterations, deck, Type.HighHand);
+		runMultipleHandTypeTest(iterations, deck, Type.OnePair);
+		runMultipleHandTypeTest(iterations, deck, Type.TwoPair);
+		runMultipleHandTypeTest(iterations, deck, Type.ThreeOfAKind);
+		runMultipleHandTypeTest(iterations, deck, Type.Straight);
+		runMultipleHandTypeTest(iterations, deck, Type.Flush);
+		runMultipleHandTypeTest(iterations, deck, Type.FullHouse);
+		runMultipleHandTypeTest(iterations, deck, Type.FourOfAKind);
+		runMultipleHandTypeTest(iterations, deck, Type.StraightFlush);
+		runMultipleHandTypeTest(iterations, deck, Type.RoyalFlush);
 		
 		
 		long endTime = System.currentTimeMillis();
@@ -278,10 +284,10 @@ public class HandOfCards {
 				new PlayingCard("J", 'H', 11, 11),
 				new PlayingCard("10", 'H', 10, 10)
 		});
-		return HandOfCards.checkCards(handOfCards, "Straight");		
+		return HandOfCards.checkCards(handOfCards, Type.Straight);		
 	}
 	
-	public static void runMultipleHandTypeTest(int iterations, DeckOfCards deck, String handType){
+	public static void runMultipleHandTypeTest(int iterations, DeckOfCards deck, Type handType){
 		int count = 0;	
 		
 		// deals 10000 hands and checks for type of hand
@@ -301,60 +307,60 @@ public class HandOfCards {
 	}
 	
 	// static method checking the type of hand
-	public static boolean checkCards(HandOfCards handOfCards, String handType){
+	public static boolean checkCards(HandOfCards handOfCards, Type handType){
 		
 		boolean typeOfHandFlag = false;
-		if(handType == "HighHand"){
+		if(handType == Type.HighHand){
 			if(handOfCards.isHighHand()){
 				typeOfHandFlag = true;
 			}
 			
-		}else if(handType == "OnePair"){
+		}else if(handType == Type.OnePair){
 			if(handOfCards.isOnePair()){
 				typeOfHandFlag = true;
 			}
 			
-		}else if(handType == "TwoPair"){
+		}else if(handType == Type.TwoPair){
 			if(handOfCards.isTwoPair()){
 				typeOfHandFlag = true;
 			}
 			
-		}else if(handType.equals("ThreeOfAKind")){
+		}else if(handType.equals(Type.ThreeOfAKind)){
 			if(handOfCards.isThreeOfAKind()){
 				typeOfHandFlag = true;
 			}
 			
-		}else if(handType.equals("Straight")){
+		}else if(handType.equals(Type.Straight)){
 			if(handOfCards.isStraight()){
 				typeOfHandFlag = true;
 			}		
 		}
 		
-		else if(handType.equals("Flush")){
+		else if(handType.equals(Type.Flush)){
 			if(handOfCards.isFlush()){
 				typeOfHandFlag = true;
 			}		
 		}
 		
-		else if(handType.equals("FullHouse")){
+		else if(handType.equals(Type.FullHouse)){
 			if(handOfCards.isFullHouse()){
 				typeOfHandFlag = true;
 			}			
 		}
 		
-		else if(handType.equals("FourOfAKind")){
+		else if(handType.equals(Type.FourOfAKind)){
 			if(handOfCards.isFourOfAKind()){
 				typeOfHandFlag = true;
 			}			
 		}
 		
-		else if(handType.equals("StraightFlush")){
+		else if(handType.equals(Type.StraightFlush)){
 			if(handOfCards.isStraightFlush()){
 				typeOfHandFlag = true;
 			}		
 		}
 		
-		else if(handType.equals("RoyalFlush")){
+		else if(handType.equals(Type.RoyalFlush)){
 			if(handOfCards.isRoyalFlush()){
 				typeOfHandFlag = true;
 			}			
