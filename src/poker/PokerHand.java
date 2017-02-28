@@ -2,15 +2,19 @@ package poker;
 
 public class PokerHand {
 	
-	public static int HIGH_HAND_DEFAULT = 0;
-	public static int ONE_PAIR_DEFAULT = 1000;
-	public static int TWO_PAIR_DEFAULT = 2000;
-	public static int THREE_OF_A_KIND_DEFAULT = 3000;
-	public static int STRAIGHT_DEFAULT = 4000;
-	public static int FLUSH_DEFAULT = 5000;
-	public static int FULL_HOUSE_DEFAULT = 6000;
-	public static int FOUR_OF_A_KIND_DEFAULT = 7000;
-	public static int STRAIGHT_FLUSH_DEFAULT = 8000;
-	public static int ROYAL_FLUSH_DEFAULT = 9000;	
+	private static int DEFAULT = 1000;
+	
+	// defines default value for each hand type, based on their order in HandOfCards enum Type (from 0-9)
+	// therefore default hand values range from 0 (for high hand) to 9000 (for royal flush) 
+	public static int HIGH_HAND_DEFAULT = HandOfCards.Type.HighHand.ordinal() * DEFAULT;
+	public static int ONE_PAIR_DEFAULT = HandOfCards.Type.OnePair.ordinal() * DEFAULT;
+	public static int TWO_PAIR_DEFAULT = HandOfCards.Type.TwoPair.ordinal() * DEFAULT;
+	public static int THREE_OF_A_KIND_DEFAULT = HandOfCards.Type.ThreeOfAKind.ordinal() * DEFAULT;
+	public static int STRAIGHT_DEFAULT = HandOfCards.Type.Straight.ordinal() * DEFAULT;
+	public static int FLUSH_DEFAULT = HandOfCards.Type.Flush.ordinal() * DEFAULT;;
+	public static int FULL_HOUSE_DEFAULT = HandOfCards.Type.FullHouse.ordinal() * DEFAULT;;
+	public static int FOUR_OF_A_KIND_DEFAULT = HandOfCards.Type.FourOfAKind.ordinal() * DEFAULT;;
+	public static int STRAIGHT_FLUSH_DEFAULT = HandOfCards.Type.StraightFlush.ordinal() * DEFAULT;;
+	public static int ROYAL_FLUSH_DEFAULT = HandOfCards.Type.RoyalFlush.ordinal() * DEFAULT;;	
 
 }

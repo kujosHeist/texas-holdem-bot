@@ -16,9 +16,6 @@ public class HandOfCards {
 	
 	public static enum Type {HighHand, OnePair, TwoPair, ThreeOfAKind, Straight, Flush, FullHouse, FourOfAKind, StraightFlush, RoyalFlush};
 	
-	
-	
-	
 	private static int CARDS_PER_HAND = 5;
 	private static int TYPES_OF_CARDS = 13; // A 2 3 ... J Q K
 	private PlayingCard[] cards = new PlayingCard[CARDS_PER_HAND];
@@ -252,7 +249,7 @@ public class HandOfCards {
 		return 0;
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) {	
 		long startTime = System.currentTimeMillis();
 		
 		DeckOfCards deck = new DeckOfCards();
