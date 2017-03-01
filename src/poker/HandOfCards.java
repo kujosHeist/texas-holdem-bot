@@ -1,5 +1,8 @@
 package poker;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 public class HandOfCards {
 	/*
 	public static int HIGH_HAND = 0;
@@ -21,6 +24,8 @@ public class HandOfCards {
 	private PlayingCard[] cards = new PlayingCard[CARDS_PER_HAND];
 	private DeckOfCards deckOfCards;
 	
+	private int[] gameValuesCountInHandArray = new int[TYPES_OF_CARDS]; // array which stores the number of each type of card in a hand
+	
 	// main constructor which deals 5 cards into HandOfCards
 	public HandOfCards(DeckOfCards deckOfCards){
 		this.deckOfCards = deckOfCards;
@@ -28,12 +33,17 @@ public class HandOfCards {
 			cards[i] = deckOfCards.dealNext();
 		}
 		sort();
+		
+		// returns an array where each item in the array is an int
+		// representing the number of that type of card in the hand
+		gameValuesCountInHandArray = getGameValueCountInHand();		
 	}
 	
 	// Extra constructor for testing specific types of hand
 	public HandOfCards(PlayingCard[] cards){
 		this.cards = cards;
 		sort();
+		gameValuesCountInHandArray = getGameValueCountInHand();		
 	}
 	
 	public DeckOfCards getDeckOfCards(){
@@ -61,7 +71,7 @@ public class HandOfCards {
 					cards[i+1]= temp;
 				} 
 			} 
-		}		
+		}			
 	}
 
 	// hand is a royal flush if it is straight flush and the last card in the array is a 10, 
@@ -72,20 +82,41 @@ public class HandOfCards {
 	
 	// hand is a straight flush if it is straight and a flush
 	public boolean isStraightFlush(){
-		return isStraight() && isFlush();
+		boolean hasStraightFlag = true;
+		
+		// loops through hand and checks if each card one higher than the next card
+		for(int i = 0, j = 1; i < CARDS_PER_HAND - 1; i++, j++){
+			PlayingCard card1 = cards[i];
+			PlayingCard card2 = cards[j];
+			
+			int gameValue1 = card1.getGameValue(); 
+			int gameValue2 = card2.getFaceValue();
+			
+			// this accounts for runs from ACE to 5
+			// which after sorting will be in the order: A 5 4 3 2
+			if(card1.getType() == "A" && gameValue2 == 5){ 
+				continue;
+			}
+			
+			// checks if the the first card is one higher than the next card
+			if(gameValue1 == gameValue2 + 1){ 
+				continue;
+			}else{
+				// if not then we can set flag to false and break
+				hasStraightFlag = false;
+				break;
+			}
+		}	
+		return hasStraightFlag && isFlush();
 	}
 	
 	
 	public boolean isFourOfAKind(){
 		boolean isFourOfAKindFlag = false;
-		
-		// returns an array where each item in the array is an int
-		// representing the number of that type of card in the hand
-		int[] gameValuesCount = getFaceValueCount();
-		
+				
 		// loops through array and checks if there are four of any type
-		for (int i = 0; i < gameValuesCount.length; i++) {
-			if(gameValuesCount[i] == 4){
+		for (int i = 0; i < TYPES_OF_CARDS; i++) {
+			if(gameValuesCountInHandArray[i] == 4){
 				isFourOfAKindFlag = true; // sets flag to true and breaks from loop
 				break;
 			}
@@ -95,22 +126,29 @@ public class HandOfCards {
 	
 	// similar to isFourOfAKind
 	public boolean isThreeOfAKind(){
-		boolean isTreeOfAKindFlag = false;
-
-		int[] gameValuesCount = getFaceValueCount();
+		boolean isThreeOfAKindFlag = false;
 		
-		for (int i = 0; i < gameValuesCount.length; i++) {
-			if(gameValuesCount[i] == 3){
-				isTreeOfAKindFlag  = true;
+		for (int i = 0; i < TYPES_OF_CARDS; i++) {
+			if(gameValuesCountInHandArray[i] == 3){
+				isThreeOfAKindFlag  = true;
 				break;
 			}
 		}
-		return isTreeOfAKindFlag ;
+		return isThreeOfAKindFlag && !isOnePair();
 	}
 	
 	// full house is a hand with a three of a kind and a pair
 	public boolean isFullHouse(){
-		return isThreeOfAKind() && isOnePair();
+		
+		boolean hasThreeOfAKindFlag = false;
+		
+		for (int i = 0; i < TYPES_OF_CARDS; i++) {
+			if(gameValuesCountInHandArray[i] == 3){
+				hasThreeOfAKindFlag  = true;
+				break;
+			}
+		}		
+		return hasThreeOfAKindFlag && isOnePair();
 	}
 	
 	public boolean isStraight(){
@@ -139,7 +177,7 @@ public class HandOfCards {
 				break;
 			}
 		}
-		return isStraightFlag;
+		return isStraightFlag && !isFlush();
 	}
 	
 	
@@ -149,7 +187,7 @@ public class HandOfCards {
 		// takes first card from the hand
 		PlayingCard card = cards[0];
 		
-		// loops through remaing cards
+		// loops through remaining cards
 		for(int i = 1; i < CARDS_PER_HAND; i++){
 			PlayingCard otherCard = cards[i];
 			
@@ -166,14 +204,11 @@ public class HandOfCards {
 	
 	public boolean isTwoPair(){
 		boolean isTwoPairFlag = false;
-
-		// gets array of the number of each type of cards
-		int[] gameValuesCount = getFaceValueCount();
 		
 		int pairs = 0; // keeps track of number of pairs
 		
-		for (int i = 0; i < gameValuesCount.length; i++) {
-			if(gameValuesCount[i] == 2){ // if pair is found we increment variable
+		for (int i = 0; i < TYPES_OF_CARDS; i++) {
+			if(gameValuesCountInHandArray[i] == 2){ // if pair is found we increment variable
 				pairs++;
 				
 			}
@@ -190,11 +225,11 @@ public class HandOfCards {
 	public boolean isOnePair(){
 		boolean isOnePairFlag = false;
 
-		int[] gameValuesCount = getFaceValueCount();
+		
 		int pairs = 0;
 		
-		for (int i = 0; i < gameValuesCount.length; i++) {
-			if(gameValuesCount[i] == 2){
+		for (int i = 0; i < TYPES_OF_CARDS; i++) {
+			if(gameValuesCountInHandArray[i] == 2){
 				pairs++;
 			}
 		}
@@ -208,13 +243,11 @@ public class HandOfCards {
 	
 	public boolean isHighHand(){
 		boolean isHighHand = true;
-
-		int[] gameValuesCount = getFaceValueCount();
 	
-		for (int i = 0; i < gameValuesCount.length; i++) {
+		for (int i = 0; i < TYPES_OF_CARDS; i++) {
 			
 			// checks if there is more than 1 of any type of card in the hand, if so it returns false
-			if(gameValuesCount[i] > 1){
+			if(gameValuesCountInHandArray[i] > 1){
 				isHighHand = false;
 			}
 		}
@@ -233,41 +266,188 @@ public class HandOfCards {
 	
 	// returns an array where each item in the array is an int
 	// representing the number of that type of card in the hand
-	private int[] getFaceValueCount(){
-		int[] gameValuesCount = new int[TYPES_OF_CARDS];
+	private int[] getGameValueCountInHand(){
+		int[] gameValuesCountInHandArray = new int[TYPES_OF_CARDS];
 		
 		for (int i = 0; i < CARDS_PER_HAND; i++) {
-			// index subtracted by one since face value go from 1-14, and our array goes from 0-13
-			int index = cards[i].getFaceValue()-1;  
-			// increments the number of this cards face value by 1
-			gameValuesCount[index]++;  
+			// index subtracted by two since game values go from 2-14, and our array's index's goes from 0-12
+			int index = cards[i].getGameValue()-2;  
+			// increments the number of this cards game value by 1
+			gameValuesCountInHandArray[index]++;  
 		}
-		return gameValuesCount;
+		return gameValuesCountInHandArray;
 	}
 	
 	public int getGameValue(){
-		Type handType = getType();
-		int defaultHandValue = PokerHand.getDefaultHandValue(handType);
-		return defaultHandValue;
+		int factor = 14;  // is used to raise to a power and multiple with game value of cards in hand
+	
+		if(isRoyalFlush()){
+			// all royal flushes are equal value, so no additional game value component needed
+			
+			int defaultValue = PokerHand.ROYAL_FLUSH_DEFAULT;
+			int additionalGameValueComponent = 0;  
+			return defaultValue + additionalGameValueComponent;
+		}
+		else if(isStraightFlush()){
+			// straight flush is decided by the hand with runs to the highest value
+			
+			int defaultValue = PokerHand.STRAIGHT_FLUSH_DEFAULT;
+			PlayingCard highCardInStraightFlush = cards[0]; // gets the highest card in the straight flush (since hand is sorted from high to low)
+			int additionalGameValueComponent = (int) Math.pow(highCardInStraightFlush.getGameValue(), 5);    
+			return defaultValue + additionalGameValueComponent;
+		}		
+		else if(isFourOfAKind()){
+			// four of a kinds are distinguished by the game value of their 4 of a kind card
+			
+			int defaultValue = PokerHand.FOUR_OF_A_KIND_DEFAULT;
+			int gameValueOfFourOfAKindCard = getGameValueOfCardWithCount(4);
+			int additionalGameValueComponent = (int) Math.pow(gameValueOfFourOfAKindCard, 4); 
+			return defaultValue + additionalGameValueComponent;
+		}		
+		
+		else if(isFullHouse()){ 
+			// Full houses are ranked by the highest Three of a kind card, 
+			// It is not possible for two players to have the same 3 of a kind, so we can simply rank the hands by the game value multiplied by a factor 
+			// and ignore the pair
+			
+			int defaultValue = PokerHand.FULL_HOUSE_DEFAULT;
+			int gameValueOfThreeOfAKind = getGameValueOfCardWithCount(3);
+			int additionalGameValueComponent = ((int) Math.pow(factor, 3)) * gameValueOfThreeOfAKind;
+			return defaultValue + additionalGameValueComponent; 
+		}	
+		
+		else if(isFlush()){
+			// flushes are ranked by highest card in flush, if there is a match then we check the next card, then the next etc.
+			// To rank these properly, we multiple the game value by the cards from high to low by a factor raised to a power, which reduces as we go down the hand to
+			// the lower cards, this gives us a correct additionalGameValueComponent
+			
+			int defaultValue = PokerHand.FLUSH_DEFAULT;
+			int additionalGameValueComponent = 0;
+			
+			int power = 4;
+			for (int i = 0; i < cards.length; i++) {
+				additionalGameValueComponent += ((int) Math.pow(factor, power--)) * cards[i].getGameValue();
+			}
+             
+			return defaultValue + additionalGameValueComponent;
+		}		
+		
+		else if(isStraight()){
+			// Straight's are distinguished by the game value of their highest card
+			
+			int defaultValue = PokerHand.STRAIGHT_DEFAULT;
+			PlayingCard highCardInStraight = cards[0]; 
+			int additionalGameValueComponent = (int) Math.pow(highCardInStraight.getGameValue(), 5);  
+			return defaultValue + additionalGameValueComponent;
+		}	
+		
+		else if(isThreeOfAKind()){
+			// Three of a kind hands are ranked by game value of the three of a kind card, 
+			// It is not possible for two players to have the same 3 of a kind, so we can simply rank the hands by the game value multiplied by a factor 
+			
+			int defaultValue = PokerHand.THREE_OF_A_KIND_DEFAULT;
+			int gameValueOfThreeOfAKind = getGameValueOfCardWithCount(3);
+			int additionalGameValueComponent = ((int) Math.pow(factor, 3)) * gameValueOfThreeOfAKind;;
+			return defaultValue + additionalGameValueComponent;
+		}	
+		else if(isTwoPair()){
+			// Two pair hands are ranked by game value of high pair, then low pair, if there is a match then we check the remaining card. 
+			// To rank these properly, we multiple the game value of high pair by the factor squared, then the lower pair by the factor, 
+			// then we add the game value of the remaining card				
+			
+			int defaultValue = PokerHand.TWO_PAIR_DEFAULT;
+			int gameValueOfHighPairCard = 0;
+			
+			// loops through games value count array and gets game value of high pair
+			for (int cardIndex = TYPES_OF_CARDS - 1; cardIndex >= 0; cardIndex--) {
+				if(gameValuesCountInHandArray[cardIndex] == 2){
+					gameValueOfHighPairCard = cardIndex + 2; // adds two to card index as array goes from 0-12, while card game values go from 2-14
+					break;
+				}
+			}
+			
+			int gameValueOfLowPairCard = getGameValueOfCardWithCount(2); // returns low pair since it checks from start of array of game value card counts
+			
+			int gameValueOfOtherCard = 0;
+			for (int i = 0; i < cards.length; i++) {
+				if(cards[i].getGameValue() != gameValueOfHighPairCard || cards[i].getGameValue() != gameValueOfLowPairCard){
+					gameValueOfOtherCard = cards[i].getGameValue();
+					break;
+				}
+			}
+			
+			int additionalGameValueComponent = ((int) Math.pow(factor, 2)) * gameValueOfHighPairCard + factor * gameValueOfLowPairCard + gameValueOfOtherCard;
+			return defaultValue + additionalGameValueComponent; 
+		}		
+		else if(isOnePair()){
+			// One pair hands are ranked by game value of pair, if there is a match then we check the next card, then the next etc.
+			// To rank these properly, we multiple the game value of the pair by a factor raised to a power which reduces as we go down the hand to
+			// the lower cards, this gives us a correct additionalGameValueComponent	
+			
+			int power = 3;
+			
+			int defaultValue = PokerHand.ONE_PAIR_DEFAULT;
+			int gameValueOfPairCard = getGameValueOfCardWithCount(2);
+						
+			int additionalGameValueComponent = ((int) Math.pow(factor, power--)) * gameValueOfPairCard;
+			
+			for (int i = 0; i < cards.length; i++) {
+				if(cards[i].getGameValue() !=  gameValueOfPairCard){
+					additionalGameValueComponent += ((int) Math.pow(factor, power--)) * cards[i].getGameValue();	
+				}
+				
+			}
+             
+			return defaultValue + additionalGameValueComponent; 
+		}		
+		else{
+			// It is high hand
+			// high hands are ranked by highest card, if there is a match then we check the next card, then the next etc.
+			// To rank these properly, we multiple the game value by the cards from high to low by a factor raised to a power, which reduces as we go down the hand to
+			// the lower cards, this gives us a correct additionalGameValueComponent
+			
+			int defaultValue = PokerHand.HIGH_HAND_DEFAULT;
+			int additionalGameValueComponent = 0;
+			
+			int power = 4;
+			for (int i = 0; i < cards.length; i++) {
+				additionalGameValueComponent += ((int) Math.pow(factor, power--)) * cards[i].getGameValue();
+			}
+             
+			return defaultValue + additionalGameValueComponent;             
+		}		
+		
 	}
+	
+	// returns the game value of the card which has a certain count in hand
+	// i.e. if a hand has 3 Aces, then this method returns 14
+	private int getGameValueOfCardWithCount(int countOfCardInHand){
+		
+		// loops through array and checks if there are four of any type
+		for (int cardIndex = 0; cardIndex < TYPES_OF_CARDS; cardIndex++) {
+			if(gameValuesCountInHandArray[cardIndex] == countOfCardInHand){
+				return cardIndex + 2; // adds two to card index as array goes from 0-12, while card game values go from 2-14
+			}
+		}
+		return 0;
+	}	
 	
 	public static void main(String[] args) {	
 		long startTime = System.currentTimeMillis();
 		
 		DeckOfCards deck = new DeckOfCards();
 		
-		
-		for (int i = 0; i < 10; i++) {
-			deck.shuffle();
-			HandOfCards handOfCards = new HandOfCards(deck);
-			System.out.println(handOfCards.toString());
-			System.out.println(handOfCards.getGameValue());
-			
-		}
+		int iterations = 100000;
 		
 		
-		/*
-		int iterations = 1000;
+		
+		// In order to hands of the same type are sorted correctly by their gameValue
+		// these method calls deal x amount of hands and checks if it is the hand type we pass as an argument.
+		// then it stores up to the first 10 of each hand type, and sorts them from lowest to highest
+		// finally it prints them out to the console, which can be inspected to ensure they are sorted in the correct order
+		// we don't test for royal flush, as all royal flushes return the same value
+		
+		
 		runMultipleHandTypeTest(iterations, deck, Type.HighHand);
 		runMultipleHandTypeTest(iterations, deck, Type.OnePair);
 		runMultipleHandTypeTest(iterations, deck, Type.TwoPair);
@@ -277,14 +457,44 @@ public class HandOfCards {
 		runMultipleHandTypeTest(iterations, deck, Type.FullHouse);
 		runMultipleHandTypeTest(iterations, deck, Type.FourOfAKind);
 		runMultipleHandTypeTest(iterations, deck, Type.StraightFlush);
-		runMultipleHandTypeTest(iterations, deck, Type.RoyalFlush);
-		*/
+		
+		
+		
+		// To Show the different hand types are sorted properly, we deal 100 random hands, sort them by their game value
+		// then print them out with handtype along side, these can then be inspected to ensure they are ordered correctly
+		// we can also note the same hand types are also ordered correctly
+		// we can change the iterations to a much higher value in order to generate the more rare hand types
+		System.out.println("*******************************************************");
+		System.out.println("Printing randomly dealt hands, sorted by gameValue");
+		Map<Integer, String> results = new TreeMap<Integer, String>();
+		
+		iterations = 100;
+		for(int i = 0; i < iterations; i++){
+			deck.shuffle();
+			HandOfCards handOfCards = new HandOfCards(deck);
+			HandOfCards.Type handType = HandOfCards.checkCards(handOfCards); 
+			results.put(handOfCards.getGameValue(), handOfCards.toString() + " " + handType);
+		}
+		
+		for(Integer key: results.keySet()){
+			System.out.println(results.get(key) + "  " + key);
+		}
+		System.out.println();		
 		
 		
 		long endTime = System.currentTimeMillis();
 		long timeDifference = endTime - startTime;
 		System.out.println("Test took " + (float)timeDifference/1000.0 + " to run");
 	}	
+	
+	
+	
+	
+	
+	
+	//**************************************************************************************************
+	// Static methods to help with testing *************************************************************
+	//**************************************************************************************************
 	
 	public static boolean runCustomHandTypeTest(){
 		HandOfCards handOfCards = new HandOfCards(
@@ -299,118 +509,121 @@ public class HandOfCards {
 	}
 	
 	public static void runMultipleHandTypeTest(int iterations, DeckOfCards deck, Type handType){
-		int count = 0;	
+		int count = 0;
+		Map<Integer, String> results = new TreeMap<Integer, String>();
 		
+		System.out.println("Checking for hand type: " + handType);
+
 		// deals 10000 hands and checks for type of hand
-		for(int i = 0; i < iterations; i++){
+		for(int i = 0; i < iterations && count < 10; i++){
 			deck.shuffle();
 			HandOfCards handOfCards = new HandOfCards(deck);
-					
-			// checks if hand is a tree of a kind
-			boolean result = checkCards(handOfCards, handType);
-			if(result){
+			
+			if(HandOfCards.checkCards(handOfCards, handType)){
+				results.put(handOfCards.getGameValue(), handOfCards.toString());
 				count++;
-			}				
+			}		
 		}
 		
-		System.out.println(count + " out of " + iterations + " hands have a " + handType);				
+		for(Integer key: results.keySet()){
+			System.out.println(results.get(key) + "  " + key);
+		}
+		System.out.println();
 	}
-	
-	
-	// returns type pof 
-	public Type getType(){
-		if(isRoyalFlush()){
-			return Type.RoyalFlush;
-		}
-		else if(isStraightFlush()){
-			return Type.StraightFlush;
-		}		
-		else if(isFourOfAKind()){
-			return Type.FourOfAKind;
-		}		
-		else if(isFullHouse()){
-			return Type.FullHouse;
-		}	
-		else if(isFlush()){
-			return Type.Flush;
-		}				
-		else if(isStraight()){
-			return Type.Straight;
-		}	
-		else if(isThreeOfAKind()){
-			return Type.ThreeOfAKind;
-		}	
-		else if(isTwoPair()){
-			return Type.TwoPair;
-		}		
-		else if(isOnePair()){
-			return Type.OnePair;
-		}		
-		else{
-			return Type.HighHand;
-		}
-	}	
 	
 	// static method checking the type of hand
 	public static boolean checkCards(HandOfCards handOfCards, Type handType){
 		
 		boolean typeOfHandFlag = false;
-		if(handType == Type.HighHand){
-			if(handOfCards.isHighHand()){
-				typeOfHandFlag = true;
-			}
-			
-		}else if(handType == Type.OnePair){
-			if(handOfCards.isOnePair()){
-				typeOfHandFlag = true;
-			}
-			
-		}else if(handType == Type.TwoPair){
-			if(handOfCards.isTwoPair()){
-				typeOfHandFlag = true;
-			}
-			
-		}else if(handType.equals(Type.ThreeOfAKind)){
-			if(handOfCards.isThreeOfAKind()){
-				typeOfHandFlag = true;
-			}
-			
-		}else if(handType.equals(Type.Straight)){
-			if(handOfCards.isStraight()){
-				typeOfHandFlag = true;
-			}		
-		}
 		
-		else if(handType.equals(Type.Flush)){
-			if(handOfCards.isFlush()){
-				typeOfHandFlag = true;
-			}		
-		}
-		
-		else if(handType.equals(Type.FullHouse)){
-			if(handOfCards.isFullHouse()){
+		if(handType.equals(Type.RoyalFlush)){
+			if(handOfCards.isRoyalFlush()){
 				typeOfHandFlag = true;
 			}			
-		}
-		
-		else if(handType.equals(Type.FourOfAKind)){
-			if(handOfCards.isFourOfAKind()){
-				typeOfHandFlag = true;
-			}			
-		}
-		
+		}	
 		else if(handType.equals(Type.StraightFlush)){
 			if(handOfCards.isStraightFlush()){
 				typeOfHandFlag = true;
 			}		
-		}
-		
-		else if(handType.equals(Type.RoyalFlush)){
-			if(handOfCards.isRoyalFlush()){
+		}		
+		else if(handType.equals(Type.FourOfAKind)){
+			if(handOfCards.isFourOfAKind()){
 				typeOfHandFlag = true;
 			}			
 		}		
+		else if(handType.equals(Type.FullHouse)){
+			if(handOfCards.isFullHouse()){
+				typeOfHandFlag = true;
+			}			
+		}	
+		else if(handType.equals(Type.Flush)){
+			if(handOfCards.isFlush()){
+				typeOfHandFlag = true;
+			}		
+		}		
+		else if(handType.equals(Type.Straight)){
+			if(handOfCards.isStraight()){
+				typeOfHandFlag = true;
+			}		
+		}		
+		else if(handType.equals(Type.ThreeOfAKind)){
+			if(handOfCards.isThreeOfAKind()){
+				typeOfHandFlag = true;
+			}
+			
+		}
+		else if(handType == Type.TwoPair){
+			if(handOfCards.isTwoPair()){
+				typeOfHandFlag = true;
+			}
+			
+		}
+		else if(handType == Type.OnePair){
+			if(handOfCards.isOnePair()){
+				typeOfHandFlag = true;
+			}
+		}		
+		
+		else if(handType == Type.HighHand){
+			if(handOfCards.isHighHand()){
+				typeOfHandFlag = true;
+			}	
+		}
 		return typeOfHandFlag;
 	}
+	
+	// static method checking the type of hand
+	public static Type checkCards(HandOfCards handOfCards){
+			if(handOfCards.isRoyalFlush()){
+				return HandOfCards.Type.RoyalFlush;
+			}		
+			else if(handOfCards.isStraightFlush()){
+				return HandOfCards.Type.StraightFlush;
+			}			
+			else if(handOfCards.isFourOfAKind()){
+				return HandOfCards.Type.FourOfAKind;
+			}					
+			else if(handOfCards.isFullHouse()){
+				return HandOfCards.Type.FullHouse;
+			}	
+			else if(handOfCards.isFlush()){
+				return HandOfCards.Type.Flush;
+			}
+			else if(handOfCards.isStraight()){
+				return HandOfCards.Type.Straight;
+			}	
+			else if(handOfCards.isThreeOfAKind()){
+				return HandOfCards.Type.ThreeOfAKind;
+			}	
+			else if(handOfCards.isTwoPair()){
+				return HandOfCards.Type.TwoPair;
+			}
+			else if(handOfCards.isOnePair()){
+				return HandOfCards.Type.OnePair;
+			}
+			else{
+				return HandOfCards.Type.HighHand;
+			}						
+	}	
 
 }
