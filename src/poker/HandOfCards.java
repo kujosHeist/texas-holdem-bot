@@ -7,6 +7,21 @@ public class HandOfCards {
 	// enum to store the String value of each type of hand, also used to generate Default hand game value in PokerHand
 	public static enum Type {HighHand, OnePair, TwoPair, ThreeOfAKind, Straight, Flush, FullHouse, FourOfAKind, StraightFlush, RoyalFlush};
 	
+	private static int DEFAULT_HAND_VALUE = 1000000;
+	
+	// defines default value for each hand type, based on their order in HandOfCards enum Type (from 0-9)
+	// therefore default hand values range from 0 (for high hand) to 9000 (for royal flush) 
+	public static int HIGH_HAND_DEFAULT = Type.HighHand.ordinal() * DEFAULT_HAND_VALUE;
+	public static int ONE_PAIR_DEFAULT = Type.OnePair.ordinal() * DEFAULT_HAND_VALUE;
+	public static int TWO_PAIR_DEFAULT = Type.TwoPair.ordinal() * DEFAULT_HAND_VALUE;
+	public static int THREE_OF_A_KIND_DEFAULT = Type.ThreeOfAKind.ordinal() * DEFAULT_HAND_VALUE;
+	public static int STRAIGHT_DEFAULT = Type.Straight.ordinal() * DEFAULT_HAND_VALUE;
+	public static int FLUSH_DEFAULT = Type.Flush.ordinal() * DEFAULT_HAND_VALUE;
+	public static int FULL_HOUSE_DEFAULT = Type.FullHouse.ordinal() * DEFAULT_HAND_VALUE;
+	public static int FOUR_OF_A_KIND_DEFAULT = Type.FourOfAKind.ordinal() * DEFAULT_HAND_VALUE;
+	public static int STRAIGHT_FLUSH_DEFAULT = Type.StraightFlush.ordinal() * DEFAULT_HAND_VALUE;
+	public static int ROYAL_FLUSH_DEFAULT = Type.RoyalFlush.ordinal() * DEFAULT_HAND_VALUE;		
+	
 	private static int CARDS_PER_HAND = 5;
 	private static int TYPES_OF_CARDS = 13; // A 2 3 ... J Q K
 	private PlayingCard[] cards = new PlayingCard[CARDS_PER_HAND];
@@ -270,14 +285,14 @@ public class HandOfCards {
 		if(isRoyalFlush()){
 			// all royal flushes are equal value, so no additional game value component needed
 			
-			int defaultValue = PokerHand.ROYAL_FLUSH_DEFAULT;
+			int defaultValue = ROYAL_FLUSH_DEFAULT;
 			int additionalGameValueComponent = 0;  
 			return defaultValue + additionalGameValueComponent;
 		}
 		else if(isStraightFlush()){
 			// straight flush is decided by the hand with runs to the highest value
 			
-			int defaultValue = PokerHand.STRAIGHT_FLUSH_DEFAULT;
+			int defaultValue = STRAIGHT_FLUSH_DEFAULT;
 			PlayingCard highCardInStraightFlush = cards[0]; // gets the highest card in the straight flush (since hand is sorted from high to low)
 			int additionalGameValueComponent = (int) Math.pow(highCardInStraightFlush.getGameValue(), 5);    
 			return defaultValue + additionalGameValueComponent;
@@ -285,7 +300,7 @@ public class HandOfCards {
 		else if(isFourOfAKind()){
 			// four of a kinds are distinguished by the game value of their 4 of a kind card
 			
-			int defaultValue = PokerHand.FOUR_OF_A_KIND_DEFAULT;
+			int defaultValue = FOUR_OF_A_KIND_DEFAULT;
 			int gameValueOfFourOfAKindCard = getGameValueOfCardWithCount(4);
 			int additionalGameValueComponent = (int) Math.pow(gameValueOfFourOfAKindCard, 4); 
 			return defaultValue + additionalGameValueComponent;
@@ -296,7 +311,7 @@ public class HandOfCards {
 			// It is not possible for two players to have the same 3 of a kind, so we can simply rank the hands by the game value multiplied by a factor 
 			// and ignore the pair
 			
-			int defaultValue = PokerHand.FULL_HOUSE_DEFAULT;
+			int defaultValue = FULL_HOUSE_DEFAULT;
 			int gameValueOfThreeOfAKind = getGameValueOfCardWithCount(3);
 			int additionalGameValueComponent = ((int) Math.pow(factor, 3)) * gameValueOfThreeOfAKind;
 			return defaultValue + additionalGameValueComponent; 
@@ -307,7 +322,7 @@ public class HandOfCards {
 			// To rank these properly, we multiple the game value by the cards from high to low by a factor raised to a power, which reduces as we go down the hand to
 			// the lower cards, this gives us a correct additionalGameValueComponent
 			
-			int defaultValue = PokerHand.FLUSH_DEFAULT;
+			int defaultValue = FLUSH_DEFAULT;
 			int additionalGameValueComponent = 0;
 			
 			int power = 4;
@@ -321,7 +336,7 @@ public class HandOfCards {
 		else if(isStraight()){
 			// Straight's are distinguished by the game value of their highest card
 			
-			int defaultValue = PokerHand.STRAIGHT_DEFAULT;
+			int defaultValue = STRAIGHT_DEFAULT;
 			PlayingCard highCardInStraight = cards[0]; 
 			int additionalGameValueComponent = (int) Math.pow(highCardInStraight.getGameValue(), 5);  
 			return defaultValue + additionalGameValueComponent;
@@ -331,7 +346,7 @@ public class HandOfCards {
 			// Three of a kind hands are ranked by game value of the three of a kind card, 
 			// It is not possible for two players to have the same 3 of a kind, so we can simply rank the hands by the game value multiplied by a factor 
 			
-			int defaultValue = PokerHand.THREE_OF_A_KIND_DEFAULT;
+			int defaultValue = THREE_OF_A_KIND_DEFAULT;
 			int gameValueOfThreeOfAKind = getGameValueOfCardWithCount(3);
 			int additionalGameValueComponent = ((int) Math.pow(factor, 3)) * gameValueOfThreeOfAKind;;
 			return defaultValue + additionalGameValueComponent;
@@ -341,7 +356,7 @@ public class HandOfCards {
 			// To rank these properly, we multiple the game value of high pair by the factor squared, then the lower pair by the factor, 
 			// then we add the game value of the remaining card				
 			
-			int defaultValue = PokerHand.TWO_PAIR_DEFAULT;
+			int defaultValue = TWO_PAIR_DEFAULT;
 			int gameValueOfHighPairCard = 0;
 			
 			// loops through games value count array and gets game value of high pair
@@ -372,7 +387,7 @@ public class HandOfCards {
 			
 			int power = 3;
 			
-			int defaultValue = PokerHand.ONE_PAIR_DEFAULT;
+			int defaultValue = ONE_PAIR_DEFAULT;
 			int gameValueOfPairCard = getGameValueOfCardWithCount(2);
 						
 			int additionalGameValueComponent = ((int) Math.pow(factor, power--)) * gameValueOfPairCard;
@@ -392,7 +407,7 @@ public class HandOfCards {
 			// To rank these properly, we multiple the game value by the cards from high to low by a factor raised to a power, which reduces as we go down the hand to
 			// the lower cards, this gives us a correct additionalGameValueComponent
 			
-			int defaultValue = PokerHand.HIGH_HAND_DEFAULT;
+			int defaultValue = HIGH_HAND_DEFAULT;
 			int additionalGameValueComponent = 0;
 			
 			int power = 4;
