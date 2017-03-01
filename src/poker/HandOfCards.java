@@ -4,19 +4,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class HandOfCards {
-	/*
-	public static int HIGH_HAND = 0;
-	public static int ONE_PAIR = 1;
-	public static int TWO_PAIR = 2;
-	public static int THREE_OF_A_KIND = 3;
-	public static int STRAIGHT = 4;
-	public static int FLUSH = 5;
-	public static int FULL_HOUSE = 6;
-	public static int FOUR_OF_A_KIND = 7;
-	public static int STRAIGHT_FLUSH = 8;
-	public static int ROYAL_FLUSH = 10;
-	*/
-	
+	// enum to store the String value of each type of hand, also used to generate Default hand game value in PokerHand
 	public static enum Type {HighHand, OnePair, TwoPair, ThreeOfAKind, Straight, Flush, FullHouse, FourOfAKind, StraightFlush, RoyalFlush};
 	
 	private static int CARDS_PER_HAND = 5;
@@ -224,8 +212,6 @@ public class HandOfCards {
 	// similar to isTwoPair except checks for exactly one pair
 	public boolean isOnePair(){
 		boolean isOnePairFlag = false;
-
-		
 		int pairs = 0;
 		
 		for (int i = 0; i < TYPES_OF_CARDS; i++) {
@@ -240,7 +226,6 @@ public class HandOfCards {
 		return isOnePairFlag;
 	}
 	
-	
 	public boolean isHighHand(){
 		boolean isHighHand = true;
 	
@@ -251,11 +236,10 @@ public class HandOfCards {
 				isHighHand = false;
 			}
 		}
-		
 		return isHighHand;		
 	}
 	
-	// prints out the hand
+	// prints hand to console
 	public String toString(){
 		String handString = "";
 		for(PlayingCard card: cards){
@@ -278,8 +262,10 @@ public class HandOfCards {
 		return gameValuesCountInHandArray;
 	}
 	
+	// returns an integer value represeting the game value of a hand of cards, which can be used to
+	// order and two hands of cards according to the rules of poker
 	public int getGameValue(){
-		int factor = 14;  // is used to raise to a power and multiple with game value of cards in hand
+		int factor = 14;  // is used to multiple with game value of cards in hand
 	
 		if(isRoyalFlush()){
 			// all royal flushes are equal value, so no additional game value component needed
@@ -413,10 +399,8 @@ public class HandOfCards {
 			for (int i = 0; i < cards.length; i++) {
 				additionalGameValueComponent += ((int) Math.pow(factor, power--)) * cards[i].getGameValue();
 			}
-             
 			return defaultValue + additionalGameValueComponent;             
 		}		
-		
 	}
 	
 	// returns the game value of the card which has a certain count in hand
@@ -436,18 +420,33 @@ public class HandOfCards {
 		long startTime = System.currentTimeMillis();
 		
 		DeckOfCards deck = new DeckOfCards();
+		deck.shuffle();
 		
-		int iterations = 100000;
+		// simple test:
 		
+		HandOfCards hand1 = new HandOfCards(deck);
+		HandOfCards hand2 = new HandOfCards(deck);
+		System.out.println("Player1: " + hand1.toString() + " " + HandOfCards.checkCards(hand1) );
+		System.out.println("Player2: " + hand2.toString() + " " + HandOfCards.checkCards(hand2));
 		
+		if(hand1.getGameValue() > hand2.getGameValue()){
+			System.out.println("Player1 wins");
+		}else if(hand2.getGameValue() > hand1.getGameValue()){
+			System.out.println("Player2 wins");
+		}else{
+			System.out.println("Draw!");
+		}
+		System.out.println();
 		
+	
 		// In order to hands of the same type are sorted correctly by their gameValue
 		// these method calls deal x amount of hands and checks if it is the hand type we pass as an argument.
 		// then it stores up to the first 10 of each hand type, and sorts them from lowest to highest
 		// finally it prints them out to the console, which can be inspected to ensure they are sorted in the correct order
-		// we don't test for royal flush, as all royal flushes return the same value
+		// we don't test for royal flush, as all royal flushes return the same value game value
+		// this test can take a while to run (10-15 seconds), as we need to deal 100,000 hands to get a good amount of each hand type
 		
-		
+		int iterations = 100000;
 		runMultipleHandTypeTest(iterations, deck, Type.HighHand);
 		runMultipleHandTypeTest(iterations, deck, Type.OnePair);
 		runMultipleHandTypeTest(iterations, deck, Type.TwoPair);
@@ -464,8 +463,9 @@ public class HandOfCards {
 		// then print them out with handtype along side, these can then be inspected to ensure they are ordered correctly
 		// we can also note the same hand types are also ordered correctly
 		// we can change the iterations to a much higher value in order to generate the more rare hand types
-		System.out.println("*******************************************************");
+		
 		System.out.println("Printing randomly dealt hands, sorted by gameValue");
+		System.out.println("**************************************************");
 		Map<Integer, String> results = new TreeMap<Integer, String>();
 		
 		iterations = 100;
@@ -495,24 +495,13 @@ public class HandOfCards {
 	//**************************************************************************************************
 	// Static methods to help with testing *************************************************************
 	//**************************************************************************************************
-	
-	public static boolean runCustomHandTypeTest(){
-		HandOfCards handOfCards = new HandOfCards(
-				new PlayingCard[]{
-				new PlayingCard("A", 'H', 1, 14),
-				new PlayingCard("K", 'H', 13, 13),
-				new PlayingCard("Q", 'H', 12, 12),
-				new PlayingCard("J", 'H', 11, 11),
-				new PlayingCard("10", 'H', 10, 10)
-		});
-		return HandOfCards.checkCards(handOfCards, Type.Straight);		
-	}
-	
+
 	public static void runMultipleHandTypeTest(int iterations, DeckOfCards deck, Type handType){
 		int count = 0;
 		Map<Integer, String> results = new TreeMap<Integer, String>();
 		
 		System.out.println("Checking for hand type: " + handType);
+		System.out.println("**********************************");
 
 		// deals 10000 hands and checks for type of hand
 		for(int i = 0; i < iterations && count < 10; i++){
@@ -530,6 +519,18 @@ public class HandOfCards {
 		}
 		System.out.println();
 	}
+	
+	public static boolean runCustomHandTypeTest(){
+		HandOfCards handOfCards = new HandOfCards(
+				new PlayingCard[]{
+				new PlayingCard("A", 'H', 1, 14),
+				new PlayingCard("K", 'H', 13, 13),
+				new PlayingCard("Q", 'H', 12, 12),
+				new PlayingCard("J", 'H', 11, 11),
+				new PlayingCard("10", 'H', 10, 10)
+		});
+		return HandOfCards.checkCards(handOfCards, Type.Straight);		
+	}	
 	
 	// static method checking the type of hand
 	public static boolean checkCards(HandOfCards handOfCards, Type handType){
