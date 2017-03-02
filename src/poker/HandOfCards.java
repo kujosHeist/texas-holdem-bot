@@ -7,6 +7,7 @@ public class HandOfCards {
 	// enum to store the String value of each type of hand, also used to generate Default hand game value in PokerHand
 	public static enum Type {HighHand, OnePair, TwoPair, ThreeOfAKind, Straight, Flush, FullHouse, FourOfAKind, StraightFlush, RoyalFlush};
 	
+	
 	private static int DEFAULT_HAND_VALUE = 1000000;
 	
 	// defines default value for each hand type, based on their order in HandOfCards enum Type (from 0-9)
@@ -480,8 +481,42 @@ public class HandOfCards {
 	}
 	
 	
-	private boolean isBustedFlush(){
-		return false;
+	private int isBustedFlush(){
+		int majoritySuitIndex = -1;
+		int flushBusterIndex = -1;
+		boolean bustedFlush = false;
+		
+		// tracks the number of each suit in hand, layout: [H, D, S, C]
+		int[] suitsInHand = {0,0,0,0};
+
+		for(int i = 0; i < CARDS_PER_HAND; i++){
+			PlayingCard card = cards[i];
+			
+			int suitIndex = card.getEnumSuit().ordinal();
+			suitsInHand[suitIndex] += 1; 
+			
+			if(suitsInHand[suitIndex] == 4){
+				bustedFlush = true;
+				majoritySuitIndex = i;
+			}
+		}
+		
+		if(bustedFlush){
+			PlayingCard.Suit majoritySuit = cards[majoritySuitIndex].getEnumSuit();
+			//System.out.println("majoritySuitIndex: " + majoritySuitIndex);
+			for(int i = 0; i < CARDS_PER_HAND; i++){
+				PlayingCard.Suit candidateSuit = cards[i].getEnumSuit();
+				//System.out.println("candidateSuit: " + candidateSuit);
+				
+				if(candidateSuit != majoritySuit){
+					flushBusterIndex = i;
+					
+				}
+				
+			}
+		}
+		
+		return flushBusterIndex;
 	}
 	
 	private boolean isBrokenStraight(){
@@ -494,12 +529,13 @@ public class HandOfCards {
 		DeckOfCards deck = new DeckOfCards();
 		deck.shuffle();
 		
+		/*
 		// simple test:
 		
 		HandOfCards hand1 = new HandOfCards(deck);
 		HandOfCards hand2 = new HandOfCards(deck);
-		System.out.println("Player1: " + hand1.toString() + " " + hand1.getHandType(hand1));
-		System.out.println("Player2: " + hand2.toString() + " " + hand2.getHandType(hand2));
+		System.out.println("Player1: " + hand1.toString() + " " + hand1.getHandType());
+		System.out.println("Player2: " + hand2.toString() + " " + hand2.getHandType());
 		
 		if(hand1.getGameValue() > hand2.getGameValue()){
 			System.out.println("Player1 wins");
@@ -530,7 +566,7 @@ public class HandOfCards {
 		runMultipleHandTypeTest(iterations, deck, Type.StraightFlush);
 		
 		
-		
+		*/
 		// To Show the different hand types are sorted properly, we deal 100 random hands, sort them by their game value
 		// then print them out with handtype along side, these can then be inspected to ensure they are ordered correctly
 		// we can also note the same hand types are also ordered correctly
@@ -540,20 +576,25 @@ public class HandOfCards {
 		System.out.println("**************************************************");
 		Map<Integer, String> results = new TreeMap<Integer, String>();
 		
-		iterations = 100;
+		int iterations = 300;
 		for(int i = 0; i < iterations; i++){
 			deck.shuffle();
 			HandOfCards handOfCards = new HandOfCards(deck);
-			HandOfCards.Type handType = handOfCards.getHandType(handOfCards); 
-			results.put(handOfCards.getGameValue(), handOfCards.toString() + " " + handType);
+			int result = handOfCards.isBustedFlush();
+			
+			if(result != -1){
+				System.out.println(handOfCards.toString() + " is a busted flush, at index: " + result);
+			}
+			
+			//results.put(handOfCards.getGameValue(), handOfCards.toString() + " " + handType);
 		}
-		
+		/*
 		for(Integer key: results.keySet()){
 			System.out.println(results.get(key) + "  " + key);
 		}
 		System.out.println();		
 		
-		
+		*/
 		long endTime = System.currentTimeMillis();
 		long timeDifference = endTime - startTime;
 		System.out.println("Test took " + (float)timeDifference/1000.0 + " to run");

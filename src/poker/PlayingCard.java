@@ -12,9 +12,24 @@ public class PlayingCard {
 	public static final char SPADES = 'S';
 	public static final char CLUBS = 'C';
 	
+	public static enum Suit {Hearts, Diamonds, Spades, Clubs};
+	
+	private Suit enumSuit;
+	
 	public PlayingCard(String type, char suit, int faceValue, int gameValue) {
 		this.type = type;
 		this.suit = suit;
+		
+		if(suit == 'H'){
+			enumSuit = Suit.Hearts;
+		}else if(suit == 'D'){
+			enumSuit = Suit.Diamonds;				
+		}else if(suit == 'S'){
+			enumSuit = Suit.Spades;
+		}else if(suit == 'C'){
+			enumSuit = Suit.Clubs;
+		}		
+		
 		this.faceValue = faceValue;
 		this.gameValue = gameValue;
 	}
@@ -29,6 +44,10 @@ public class PlayingCard {
 	
 	public char getSuit(){
 		return suit;
+	}
+	
+	public Suit getEnumSuit(){
+		return enumSuit;
 	}
 	
 	public int getFaceValue(){
