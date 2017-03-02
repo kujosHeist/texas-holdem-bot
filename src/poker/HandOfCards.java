@@ -432,32 +432,32 @@ public class HandOfCards {
 	
 	
 	// checks the type of hand
-	public Type getHandType(HandOfCards handOfCards){
-			if(handOfCards.isRoyalFlush()){
+	public Type getHandType(){
+			if(isRoyalFlush()){
 				return HandOfCards.Type.RoyalFlush;
 			}		
-			else if(handOfCards.isStraightFlush()){
+			else if(isStraightFlush()){
 				return HandOfCards.Type.StraightFlush;
 			}			
-			else if(handOfCards.isFourOfAKind()){
+			else if(isFourOfAKind()){
 				return HandOfCards.Type.FourOfAKind;
 			}					
-			else if(handOfCards.isFullHouse()){
+			else if(isFullHouse()){
 				return HandOfCards.Type.FullHouse;
 			}	
-			else if(handOfCards.isFlush()){
+			else if(isFlush()){
 				return HandOfCards.Type.Flush;
 			}
-			else if(handOfCards.isStraight()){
+			else if(isStraight()){
 				return HandOfCards.Type.Straight;
 			}	
-			else if(handOfCards.isThreeOfAKind()){
+			else if(isThreeOfAKind()){
 				return HandOfCards.Type.ThreeOfAKind;
 			}	
-			else if(handOfCards.isTwoPair()){
+			else if(isTwoPair()){
 				return HandOfCards.Type.TwoPair;
 			}
-			else if(handOfCards.isOnePair()){
+			else if(isOnePair()){
 				return HandOfCards.Type.OnePair;
 			}
 			else{
@@ -466,14 +466,26 @@ public class HandOfCards {
 	}	
 	
 	public int getDiscardProbability(int cardPosition){
+		int discardProbability = 0;
 		if(cardPosition < 0 || cardPosition > 4){
-			return 0;	
+			return discardProbability;	
 		}
 		
+		Type handType = getHandType();
+		if(handType == Type.HighHand || handType == Type.OnePair){
+			
+		}
 		
-		
-		
-		return 0;
+		return discardProbability;
+	}
+	
+	
+	private boolean isBustedFlush(){
+		return false;
+	}
+	
+	private boolean isBrokenStraight(){
+		return false;
 	}
 	
 	public static void main(String[] args) {	
