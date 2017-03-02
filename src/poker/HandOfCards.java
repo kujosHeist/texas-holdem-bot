@@ -213,7 +213,6 @@ public class HandOfCards {
 		for (int i = 0; i < TYPES_OF_CARDS; i++) {
 			if(gameValuesCountInHandArray[i] == 2){ // if pair is found we increment variable
 				pairs++;
-				
 			}
 		}
 		// returns true if exactly two pairs
@@ -431,6 +430,52 @@ public class HandOfCards {
 		return 0;
 	}	
 	
+	
+	// checks the type of hand
+	public Type getHandType(HandOfCards handOfCards){
+			if(handOfCards.isRoyalFlush()){
+				return HandOfCards.Type.RoyalFlush;
+			}		
+			else if(handOfCards.isStraightFlush()){
+				return HandOfCards.Type.StraightFlush;
+			}			
+			else if(handOfCards.isFourOfAKind()){
+				return HandOfCards.Type.FourOfAKind;
+			}					
+			else if(handOfCards.isFullHouse()){
+				return HandOfCards.Type.FullHouse;
+			}	
+			else if(handOfCards.isFlush()){
+				return HandOfCards.Type.Flush;
+			}
+			else if(handOfCards.isStraight()){
+				return HandOfCards.Type.Straight;
+			}	
+			else if(handOfCards.isThreeOfAKind()){
+				return HandOfCards.Type.ThreeOfAKind;
+			}	
+			else if(handOfCards.isTwoPair()){
+				return HandOfCards.Type.TwoPair;
+			}
+			else if(handOfCards.isOnePair()){
+				return HandOfCards.Type.OnePair;
+			}
+			else{
+				return HandOfCards.Type.HighHand;
+			}						
+	}	
+	
+	public int getDiscardProbability(int cardPosition){
+		if(cardPosition < 0 || cardPosition > 4){
+			return 0;	
+		}
+		
+		
+		
+		
+		return 0;
+	}
+	
 	public static void main(String[] args) {	
 		long startTime = System.currentTimeMillis();
 		
@@ -441,8 +486,8 @@ public class HandOfCards {
 		
 		HandOfCards hand1 = new HandOfCards(deck);
 		HandOfCards hand2 = new HandOfCards(deck);
-		System.out.println("Player1: " + hand1.toString() + " " + HandOfCards.checkCards(hand1) );
-		System.out.println("Player2: " + hand2.toString() + " " + HandOfCards.checkCards(hand2));
+		System.out.println("Player1: " + hand1.toString() + " " + hand1.getHandType(hand1));
+		System.out.println("Player2: " + hand2.toString() + " " + hand2.getHandType(hand2));
 		
 		if(hand1.getGameValue() > hand2.getGameValue()){
 			System.out.println("Player1 wins");
@@ -487,7 +532,7 @@ public class HandOfCards {
 		for(int i = 0; i < iterations; i++){
 			deck.shuffle();
 			HandOfCards handOfCards = new HandOfCards(deck);
-			HandOfCards.Type handType = HandOfCards.checkCards(handOfCards); 
+			HandOfCards.Type handType = handOfCards.getHandType(handOfCards); 
 			results.put(handOfCards.getGameValue(), handOfCards.toString() + " " + handType);
 		}
 		
@@ -523,7 +568,7 @@ public class HandOfCards {
 			deck.shuffle();
 			HandOfCards handOfCards = new HandOfCards(deck);
 			
-			if(HandOfCards.checkCards(handOfCards, handType)){
+			if(HandOfCards.checkIfHandType(handOfCards, handType)){
 				results.put(handOfCards.getGameValue(), handOfCards.toString());
 				count++;
 			}		
@@ -544,11 +589,11 @@ public class HandOfCards {
 				new PlayingCard("J", 'H', 11, 11),
 				new PlayingCard("10", 'H', 10, 10)
 		});
-		return HandOfCards.checkCards(handOfCards, Type.Straight);		
+		return HandOfCards.checkIfHandType(handOfCards, Type.Straight);		
 	}	
 	
 	// static method checking the type of hand
-	public static boolean checkCards(HandOfCards handOfCards, Type handType){
+	public static boolean checkIfHandType(HandOfCards handOfCards, Type handType){
 		
 		boolean typeOfHandFlag = false;
 		
@@ -606,40 +651,5 @@ public class HandOfCards {
 			}	
 		}
 		return typeOfHandFlag;
-	}
-	
-	// static method checking the type of hand
-	public static Type checkCards(HandOfCards handOfCards){
-			if(handOfCards.isRoyalFlush()){
-				return HandOfCards.Type.RoyalFlush;
-			}		
-			else if(handOfCards.isStraightFlush()){
-				return HandOfCards.Type.StraightFlush;
-			}			
-			else if(handOfCards.isFourOfAKind()){
-				return HandOfCards.Type.FourOfAKind;
-			}					
-			else if(handOfCards.isFullHouse()){
-				return HandOfCards.Type.FullHouse;
-			}	
-			else if(handOfCards.isFlush()){
-				return HandOfCards.Type.Flush;
-			}
-			else if(handOfCards.isStraight()){
-				return HandOfCards.Type.Straight;
-			}	
-			else if(handOfCards.isThreeOfAKind()){
-				return HandOfCards.Type.ThreeOfAKind;
-			}	
-			else if(handOfCards.isTwoPair()){
-				return HandOfCards.Type.TwoPair;
-			}
-			else if(handOfCards.isOnePair()){
-				return HandOfCards.Type.OnePair;
-			}
-			else{
-				return HandOfCards.Type.HighHand;
-			}						
-	}	
-
+	}		
 }
