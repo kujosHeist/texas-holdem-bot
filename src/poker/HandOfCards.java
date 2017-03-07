@@ -1,5 +1,6 @@
 package poker;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -28,7 +29,7 @@ public class HandOfCards {
 	private PlayingCard[] cards = new PlayingCard[CARDS_PER_HAND];
 	private DeckOfCards deckOfCards;
 	
-	private int[] gameValuesCountInHandArray = new int[TYPES_OF_CARDS]; // array which stores the number of each type of card in a hand
+	private int[] gameValuesInHandCountArray = new int[TYPES_OF_CARDS]; // array which stores the number of each type of card in a hand
 	
 	// main constructor which deals 5 cards into HandOfCards
 	public HandOfCards(DeckOfCards deckOfCards){
@@ -40,14 +41,14 @@ public class HandOfCards {
 		
 		// returns an array where each item in the array is an int
 		// representing the number of that type of card in the hand
-		gameValuesCountInHandArray = getGameValueCountInHand();		
+		gameValuesInHandCountArray = getGameValueCountInHand();		
 	}
 	
 	// Extra constructor for testing specific types of hand
 	public HandOfCards(PlayingCard[] cards){
 		this.cards = cards;
 		sort();
-		gameValuesCountInHandArray = getGameValueCountInHand();		
+		gameValuesInHandCountArray = getGameValueCountInHand();		
 	}
 	
 	public DeckOfCards getDeckOfCards(){
@@ -120,7 +121,7 @@ public class HandOfCards {
 				
 		// loops through array and checks if there are four of any type
 		for (int i = 0; i < TYPES_OF_CARDS; i++) {
-			if(gameValuesCountInHandArray[i] == 4){
+			if(gameValuesInHandCountArray[i] == 4){
 				isFourOfAKindFlag = true; // sets flag to true and breaks from loop
 				break;
 			}
@@ -133,7 +134,7 @@ public class HandOfCards {
 		boolean isThreeOfAKindFlag = false;
 		
 		for (int i = 0; i < TYPES_OF_CARDS; i++) {
-			if(gameValuesCountInHandArray[i] == 3){
+			if(gameValuesInHandCountArray[i] == 3){
 				isThreeOfAKindFlag  = true;
 				break;
 			}
@@ -147,7 +148,7 @@ public class HandOfCards {
 		boolean hasThreeOfAKindFlag = false;
 		
 		for (int i = 0; i < TYPES_OF_CARDS; i++) {
-			if(gameValuesCountInHandArray[i] == 3){
+			if(gameValuesInHandCountArray[i] == 3){
 				hasThreeOfAKindFlag  = true;
 				break;
 			}
@@ -212,7 +213,7 @@ public class HandOfCards {
 		int pairs = 0; // keeps track of number of pairs
 		
 		for (int i = 0; i < TYPES_OF_CARDS; i++) {
-			if(gameValuesCountInHandArray[i] == 2){ // if pair is found we increment variable
+			if(gameValuesInHandCountArray[i] == 2){ // if pair is found we increment variable
 				pairs++;
 			}
 		}
@@ -230,7 +231,7 @@ public class HandOfCards {
 		int pairs = 0;
 		
 		for (int i = 0; i < TYPES_OF_CARDS; i++) {
-			if(gameValuesCountInHandArray[i] == 2){
+			if(gameValuesInHandCountArray[i] == 2){
 				pairs++;
 			}
 		}
@@ -247,7 +248,7 @@ public class HandOfCards {
 		for (int i = 0; i < TYPES_OF_CARDS; i++) {
 			
 			// checks if there is more than 1 of any type of card in the hand, if so it returns false
-			if(gameValuesCountInHandArray[i] > 1){
+			if(gameValuesInHandCountArray[i] > 1){
 				isHighHand = false;
 			}
 		}
@@ -361,7 +362,7 @@ public class HandOfCards {
 			
 			// loops through games value count array and gets game value of high pair
 			for (int cardIndex = TYPES_OF_CARDS - 1; cardIndex >= 0; cardIndex--) {
-				if(gameValuesCountInHandArray[cardIndex] == 2){
+				if(gameValuesInHandCountArray[cardIndex] == 2){
 					gameValueOfHighPairCard = cardIndex + 2; // adds two to card index as array goes from 0-12, while card game values go from 2-14
 					break;
 				}
@@ -424,7 +425,7 @@ public class HandOfCards {
 		
 		// loops through array and checks if there are four of any type
 		for (int cardIndex = 0; cardIndex < TYPES_OF_CARDS; cardIndex++) {
-			if(gameValuesCountInHandArray[cardIndex] == countOfCardInHand){
+			if(gameValuesInHandCountArray[cardIndex] == countOfCardInHand){
 				return cardIndex + 2; // adds two to card index as array goes from 0-12, while card game values go from 2-14
 			}
 		}
@@ -474,11 +475,183 @@ public class HandOfCards {
 		
 		Type handType = getHandType();
 		if(handType == Type.HighHand || handType == Type.OnePair){
-			
+			boolean result = isBrokenStraight();
+			if(result){
+				int indexOfCardThatBrokeStraight = getCardThatBrokeStraight();
+				
+				if(indexOfCardThatBrokeStraight > 0){
+					System.out.println("Card that broke straight: " + cards[indexOfCardThatBrokeStraight]);
+				}
+			}
 		}
 		
 		return discardProbability;
 	}
+	
+	private int getCardThatBrokeStraight(){
+		
+		int gameValueOfCardThatBrokeStraight = -1;
+		int indexOfCardThatBrokeStraight = -1;
+		
+		// if there are two of any card type, then one of them is what broke the straight, so
+		// we just need to find the card which there are two of
+		for (int i = 0; i < gameValuesInHandCountArray.length; i++) {
+			if(gameValuesInHandCountArray[i] == 2){
+				gameValueOfCardThatBrokeStraight =  i + 2;
+				break;
+			}
+		}
+		
+		int keepCards[] = {0,0,0,0,0};
+		
+		// otherwise, we need to check which card is the odd one out
+		if(gameValueOfCardThatBrokeStraight == -1){
+			// if we have an Ace in our hand, it changes the way we need to search for the card that broke the straight
+			if(cards[0].getType() == "A"){
+				
+				for (int i = 0; i < cards.length; i++) {
+					if(hasNeighbour(i, false)){
+						keepCards[i] = 1;
+					}
+				}
+				System.out.println("hasNeighbour: " + Arrays.toString(keepCards));
+				int indexOfOddCard = findOddCardFromNeighbours(keepCards, false);
+				System.out.println("Card which broke straight: " + cards[indexOfOddCard]);					
+			}else{
+				
+				for (int i = 0; i < cards.length; i++) {
+					if(hasNeighbour(i, false)){
+						keepCards[i] = 1;
+					}
+				}
+				System.out.println("hasNeighbour: " + Arrays.toString(keepCards));
+				int indexOfOddCard = findOddCardFromNeighbours(keepCards, false);
+				System.out.println("Card which broke straight: " + cards[indexOfOddCard]);				
+			}
+			
+
+		}
+		
+		for (int i = 0; i < CARDS_PER_HAND; i++) {
+			if(cards[i].getFaceValue() == gameValueOfCardThatBrokeStraight){
+				
+				indexOfCardThatBrokeStraight = i;
+			}
+		}		
+		return indexOfCardThatBrokeStraight;
+	}
+	
+	private boolean hasNeighbour(int index, boolean hasAce){
+		
+		if(hasAce){
+			if(index > 0){
+				if(cards[index-1].getFaceValue() == cards[index].getFaceValue() + 1){
+					return true;
+				}			
+			}
+
+			if(index < 4){
+				if(cards[index].getFaceValue() == cards[index+1].getFaceValue() + 1){
+					return true;
+				}	
+			}
+			return false;			
+		}else{
+			if(index > 0){
+				if(cards[index-1].getGameValue() == cards[index].getGameValue() + 1){
+					return true;
+				}			
+			}
+
+			
+			if(index < 4){
+				if(cards[index].getGameValue() == cards[index+1].getGameValue() + 1){
+					return true;
+				}	
+			}
+			return false;
+		}
+		
+
+	}
+	
+	private int findOddCardFromNeighbours(int[] keepCards, boolean hasAce){
+		
+		int noNeighbourIndex = -1;
+		int otherNoNeighbourIndex = -1;
+		int cardsWithNoNeighbours = 0;
+		for (int i = 0; i < keepCards.length; i++) {
+			if(keepCards[i] == 0){
+				if(cardsWithNoNeighbours == 0){
+					noNeighbourIndex = i;
+					cardsWithNoNeighbours++;
+				}else{
+					otherNoNeighbourIndex = i;
+				}
+
+			}
+		}		
+		
+		if(cardsWithNoNeighbours == 1){
+			return noNeighbourIndex;
+		}else{
+			int d1 = distanceToCardWithNeighbour(keepCards, noNeighbourIndex, hasAce);
+			int d2 = distanceToCardWithNeighbour(keepCards, otherNoNeighbourIndex, hasAce);
+			
+			if(d1 < d2){
+				return noNeighbourIndex;
+			}else{
+				return otherNoNeighbourIndex;
+			}
+			// find the card with no neighbour which is closest to a card with a neighbour
+		}
+		
+	}
+	
+	private int distanceToCardWithNeighbour(int[] keepCards, int indexOfCardWithNoNeighbour, boolean hasAce){
+		
+		if(hasAce){
+			PlayingCard cardWithNoNeighbour = cards[indexOfCardWithNoNeighbour];
+			int distanceLeft = 100, distanceRight = 100;
+			
+			int neighbourIndex = indexOfCardWithNoNeighbour - 1;
+			
+			if(neighbourIndex > 0 && keepCards[neighbourIndex] != 0){
+				distanceLeft = cards[neighbourIndex].getFaceValue() - cardWithNoNeighbour.getFaceValue();
+			}
+			
+			neighbourIndex = indexOfCardWithNoNeighbour + 1;
+			
+			if(neighbourIndex < 5 && keepCards[neighbourIndex] != 0){
+				distanceRight = cardWithNoNeighbour.getFaceValue() - cards[neighbourIndex].getFaceValue();
+			}
+			
+			return Math.min(distanceLeft, distanceRight);			
+		}else{
+			PlayingCard cardWithNoNeighbour = cards[indexOfCardWithNoNeighbour];
+			int distanceLeft = 100, distanceRight = 100;
+			
+			int neighbourIndex = indexOfCardWithNoNeighbour - 1;
+			
+			if(neighbourIndex > 0 && keepCards[neighbourIndex] != 0){
+				distanceLeft = cards[neighbourIndex].getGameValue() - cardWithNoNeighbour.getGameValue();
+			}
+			
+			neighbourIndex = indexOfCardWithNoNeighbour + 1;
+			
+			if(neighbourIndex < 5 && keepCards[neighbourIndex] != 0){
+				distanceRight = cardWithNoNeighbour.getGameValue() - cards[neighbourIndex].getGameValue();
+			}
+			
+			return Math.min(distanceLeft, distanceRight);
+		}
+
+	}
+	
+	
+	
+	
+	
 	
 	
 	private int isBustedFlush(){
@@ -503,23 +676,87 @@ public class HandOfCards {
 		
 		if(bustedFlush){
 			PlayingCard.Suit majoritySuit = cards[majoritySuitIndex].getEnumSuit();
-			//System.out.println("majoritySuitIndex: " + majoritySuitIndex);
 			for(int i = 0; i < CARDS_PER_HAND; i++){
 				PlayingCard.Suit candidateSuit = cards[i].getEnumSuit();
-				//System.out.println("candidateSuit: " + candidateSuit);
-				
 				if(candidateSuit != majoritySuit){
 					flushBusterIndex = i;
-					
 				}
-				
 			}
 		}
-		
 		return flushBusterIndex;
 	}
 	
 	private boolean isBrokenStraight(){
+		int almostStraightCount = 4;
+		int checkCards = 5;
+		
+		// gameValuesInHandCountArray is a array of size 13
+		// each location in array is an int representing the number of
+		// that card type in our hand, it is generated when the hand is dealt
+		// this makes is easier to look for different hand types
+		// e.g. if our hand was:
+		// AH 9H 8H 3H 2H 
+		// then gameValuesInHandCountArray would be: 
+		// [1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1]  (cards listed in game value order: 2,3,4... -> ...J,Q,K,A)
+		
+		
+		// checks if there is a Ace in the hand, if so then this code 
+		// takes into account a low or high Ace when looking for a broken straight
+		if(gameValuesInHandCountArray[TYPES_OF_CARDS-1] > 0){
+			// special values for checking the first chunk of the array, to account for an Ace
+			almostStraightCount = 3;
+			checkCards = 4;
+		}
+		
+		int i = 0;
+		int j = 4;
+		int index = 0;		
+		
+		// These loop goes through the array holding the number of each card type.
+		// it scans the array from left to right checking if there is a broken loop
+		while(j < 13){
+			int count = 0;
+			index = i;
+			
+
+			// this checks array location 0-4 in the gameValuesInHandCountArray, 
+			// then it checks location 1-5, then 2-6 etc. until it finally checks location 8-12
+			// it works in a sliding window style, each loop around the window slides one location to the right
+			// if in any set of 5 locations, there are 3 non-zero values, then we have 4 out of 5 
+			// cards of a run
+			for (int k = 0; k < checkCards; k++) {
+				System.out.print(index + " ");
+				
+				// if we find a location in array with value greater then 0, then we have that card in our hand
+				// so we increment the count
+				if(gameValuesInHandCountArray[index++] > 0){
+					count++;
+				}
+			}
+			System.out.print("count: " + count);
+			System.out.println();
+			
+			// if count is equal to almost straight (3 in case of Ace in hand for the first run, 4 otherwise)
+			// then we have a broken straight
+			if(count == almostStraightCount){
+				System.out.println(toString());
+				System.out.println(Arrays.toString(gameValuesInHandCountArray));		
+				System.out.println("Broken Straight");
+				
+				
+				return true;
+			}
+			
+			// resets count, increments i,j, 
+			count = 0;
+			i++;
+			j++;
+			// resets the almost these values back to default, as we only need them different for the first round
+			// if there is an Ace
+			almostStraightCount = 4;
+			checkCards = 5;
+		}
+		
 		return false;
 	}
 	
@@ -576,15 +813,67 @@ public class HandOfCards {
 		System.out.println("**************************************************");
 		Map<Integer, String> results = new TreeMap<Integer, String>();
 		
-		int iterations = 300;
-		for(int i = 0; i < iterations; i++){
-			deck.shuffle();
-			HandOfCards handOfCards = new HandOfCards(deck);
-			int result = handOfCards.isBustedFlush();
+		deck.shuffle();
+		//HandOfCards handOfCards = new HandOfCards(deck);
+		HandOfCards handOfCards = new HandOfCards(
+				new PlayingCard[]{
+				new PlayingCard("2", 'H', 2, 2),
+				new PlayingCard("3", 'C', 3, 3),
+				new PlayingCard("4", 'H', 4, 4),
+				new PlayingCard("8", 'C', 8, 8),
+				new PlayingCard("A", 'H', 1, 14),
+		});			
+		
+		if(!HandOfCards.checkIfHandType(handOfCards, Type.Straight)){
+			int result = handOfCards.getDiscardProbability(0);	
 			
+		}	
+		System.out.println();
+		deck.shuffle();
+		//HandOfCards handOfCards = new HandOfCards(deck);
+		handOfCards = new HandOfCards(
+				new PlayingCard[]{
+				new PlayingCard("2", 'H', 2, 2),
+				new PlayingCard("5", 'C', 5, 5),
+				new PlayingCard("6", 'H', 6, 6),
+				new PlayingCard("7", 'C', 7, 7),
+				new PlayingCard("8", 'H', 8, 8),
+		});			
+		
+		if(!HandOfCards.checkIfHandType(handOfCards, Type.Straight)){
+			int result = handOfCards.getDiscardProbability(0);	
+		}		
+		
+		
+		System.out.println();
+		deck.shuffle();
+		//HandOfCards handOfCards = new HandOfCards(deck);
+		handOfCards = new HandOfCards(
+				new PlayingCard[]{
+				new PlayingCard("8", 'H', 8, 8),
+				new PlayingCard("6", 'C', 6, 6),
+				new PlayingCard("4", 'H', 4, 4),
+				new PlayingCard("3", 'C', 3, 3),
+				new PlayingCard("2", 'H', 2, 2),
+		});			
+		
+		if(!HandOfCards.checkIfHandType(handOfCards, Type.Straight)){
+			int result = handOfCards.getDiscardProbability(0);	
+		}		
+				
+		
+		
+		
+		int iterations = 1;
+		for(int i = 0; i < iterations; i++){
+
+			
+			
+			/*
 			if(result != -1){
 				System.out.println(handOfCards.toString() + " is a busted flush, at index: " + result);
 			}
+			*/
 			
 			//results.put(handOfCards.getGameValue(), handOfCards.toString() + " " + handType);
 		}
