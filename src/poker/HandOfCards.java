@@ -555,8 +555,9 @@ public class HandOfCards {
 				return KEEP;
 			}
 		}else{ 
+			
 			// we have a high hand card, so we discard any card which is not in the top two highest in our hand
-			if(cardPosition != HIGH_CARD_INDEX || cardPosition != HIGH_CARD_INDEX+1){
+			if(cardPosition != HIGH_CARD_INDEX && cardPosition != HIGH_CARD_INDEX+1){
 				return DISCARD;
 			}else{
 				return KEEP;
@@ -776,25 +777,144 @@ public class HandOfCards {
 		DeckOfCards deck = new DeckOfCards();
 		deck.shuffle();
 		
-		
+		//////////////////////////////////////////
+		// Main Test
+		/////////////////////////////////////////
+		// deals 10 hands, and shows which cards to discard
 		HandOfCards handOfCards;
-		
 		int iterations = 1000;
 		for(int i = 0; i < iterations; i++){
 			deck.shuffle();
 			handOfCards = new HandOfCards(deck);
+			
 			System.out.println(handOfCards.toString());
 			System.out.println(handOfCards.getHandType());
 			
 			for (int cardPosition = 0; cardPosition < handOfCards.CARDS_PER_HAND; cardPosition++) {
 				int discardProbability = handOfCards.getDiscardProbability(cardPosition);
-				System.out.println(discardProbability);
+				
+				
+				System.out.println(handOfCards.cards[cardPosition] + " - "  + discardProbability);
 			}
-			System.out.println();
-					
+			System.out.println();				
 			
 		}
-
+		
+		
+		//////////////////////////////////////////
+		// Special Tests
+		/////////////////////////////////////////		
+		
+		
+		// checks that it detects a broken straight, and discards the correct card
+		HandOfCards handOfCards2 = new HandOfCards(
+				new PlayingCard[]{
+				new PlayingCard("10", 'C', 10, 10),
+				new PlayingCard("9", 'C', 9, 9),
+				new PlayingCard("8", 'H', 8, 8),
+				new PlayingCard("7", 'S', 7, 7),
+				new PlayingCard("2", 'S', 2, 2)
+		});
+		
+		System.out.println(handOfCards2.toString());
+		System.out.println("Checking for Broken Straight");
+		
+		for (int cardPosition = 0; cardPosition < handOfCards2.CARDS_PER_HAND; cardPosition++) {
+			int discardProbability = handOfCards2.getDiscardProbability(cardPosition);
+			// prints out the probability of discarding each card, in this case the card which broke the straight is the only one to discard
+			System.out.println(handOfCards2.cards[cardPosition] + " - "  + discardProbability);
+		}
+		System.out.println();		
+		
+		
+		
+		
+		// checks that it detects a busted flush, and discards the correct card
+		handOfCards2 = new HandOfCards(
+				new PlayingCard[]{
+				new PlayingCard("10", 'C', 10, 10),
+				new PlayingCard("9", 'C', 9, 9),
+				new PlayingCard("8", 'H', 8, 8),
+				new PlayingCard("7", 'C', 3, 3),
+				new PlayingCard("2", 'C', 2, 2)
+		});
+		
+		System.out.println(handOfCards2.toString());
+		System.out.println("Checking for Busted Flush");
+		
+		for (int cardPosition = 0; cardPosition < handOfCards2.CARDS_PER_HAND; cardPosition++) {
+			int discardProbability = handOfCards2.getDiscardProbability(cardPosition);
+			// prints out the probability of discarding each card, in this case the card which busted the flush is the only one to discard
+			System.out.println(handOfCards2.cards[cardPosition] + " - "  + discardProbability);
+		}
+		System.out.println();			
+		
+		
+		// checks that it detects a two pair, and discards the correct card
+		handOfCards2 = new HandOfCards(
+				new PlayingCard[]{
+				new PlayingCard("10", 'C', 10, 10),
+				new PlayingCard("10", 'D', 10, 10),
+				new PlayingCard("8", 'H', 8, 8),
+				new PlayingCard("8", 'C', 8, 8),
+				new PlayingCard("2", 'C', 2, 2)
+		});
+		
+		System.out.println(handOfCards2.toString());
+		System.out.println(handOfCards2.getHandType());
+		
+		for (int cardPosition = 0; cardPosition < handOfCards2.CARDS_PER_HAND; cardPosition++) {
+			int discardProbability = handOfCards2.getDiscardProbability(cardPosition);
+			// prints out the probability of discarding each card, in this case the card which busted the flush is the only one to discard
+			System.out.println(handOfCards2.cards[cardPosition] + " - "  + discardProbability);
+		}
+		System.out.println();	
+		
+		
+		
+		
+		
+		// checks that it detects a Three of a kind, and discards the correct cards
+		handOfCards2 = new HandOfCards(
+				new PlayingCard[]{
+				new PlayingCard("10", 'C', 10, 10),
+				new PlayingCard("10", 'D', 10, 10),
+				new PlayingCard("10", 'H', 10, 10),
+				new PlayingCard("8", 'C', 8, 8),
+				new PlayingCard("2", 'C', 2, 2)
+		});
+		
+		System.out.println(handOfCards2.toString());
+		System.out.println(handOfCards2.getHandType());
+		
+		for (int cardPosition = 0; cardPosition < handOfCards2.CARDS_PER_HAND; cardPosition++) {
+			int discardProbability = handOfCards2.getDiscardProbability(cardPosition);
+			// prints out the probability of discarding each card, in this case the card which busted the flush is the only one to discard
+			System.out.println(handOfCards2.cards[cardPosition] + " - "  + discardProbability);
+		}
+		System.out.println();	
+		
+		
+		// checks that it detects a Full house, and discards the correct cards
+		handOfCards2 = new HandOfCards(
+				new PlayingCard[]{
+				new PlayingCard("10", 'C', 10, 10),
+				new PlayingCard("10", 'D', 10, 10),
+				new PlayingCard("10", 'H', 10, 10),
+				new PlayingCard("8", 'C', 8, 8),
+				new PlayingCard("8", 'D', 8, 8)
+		});
+		
+		System.out.println(handOfCards2.toString());
+		System.out.println(handOfCards2.getHandType());
+		
+		for (int cardPosition = 0; cardPosition < handOfCards2.CARDS_PER_HAND; cardPosition++) {
+			int discardProbability = handOfCards2.getDiscardProbability(cardPosition);
+			// prints out the probability of discarding each card, in this case the card which busted the flush is the only one to discard
+			System.out.println(handOfCards2.cards[cardPosition] + " - "  + discardProbability);
+		}
+		System.out.println();			
+		
 		long endTime = System.currentTimeMillis();
 		long timeDifference = endTime - startTime;
 		System.out.println("Test took " + (float)timeDifference/1000.0 + " to run");
