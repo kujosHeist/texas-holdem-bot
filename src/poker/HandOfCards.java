@@ -25,7 +25,7 @@ public class HandOfCards {
 	public static int STRAIGHT_FLUSH_DEFAULT = Type.StraightFlush.ordinal() * DEFAULT_HAND_VALUE;
 	public static int ROYAL_FLUSH_DEFAULT = Type.RoyalFlush.ordinal() * DEFAULT_HAND_VALUE;		
 	
-	private static int CARDS_PER_HAND = 5;
+	public static int CARDS_PER_HAND = 5;
 	
 	private static int HIGH_CARD_INDEX = 0;
 	private static int LOW_CARD_INDEX = 4;
