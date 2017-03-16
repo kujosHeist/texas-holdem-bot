@@ -8,7 +8,9 @@ public class DeckOfCards {
 	private char[] suits = {PlayingCard.CLUBS, PlayingCard.DIAMONDS, PlayingCard.HEARTS, PlayingCard.SPADES}; // array to hold each suit. 
     private String[] types = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};			  // array to hold type e.g. A for Ace.
     
-	private PlayingCard[] deck = new PlayingCard[52]; 														  // array to store the deck of cards.
+    public int DECK_SIZE = 52;
+    
+	private PlayingCard[] deck = new PlayingCard[DECK_SIZE]; 														  // array to store the deck of cards.
 	private int nextCardIndex = deck.length - 1;									                          // index variable to keep track of next card to be dealt, initially set to last card in array	
 	private ArrayList<PlayingCard> discardedCards = new ArrayList<PlayingCard>(); 							  // ArrayList to hold discarded cards
 	
@@ -29,7 +31,6 @@ public class DeckOfCards {
 	}
 	
 	public void shuffle(){										
-		reset();				// resets the deck to its original form
 		Random random = new Random();							
 		for(int i = 0; i < deck.length * deck.length; i++){		
 			
@@ -62,8 +63,10 @@ public class DeckOfCards {
 	}
 
 	// when a card is returned, it is stored in the discardedCards array list
-	public void returnCard(PlayingCard discarded){				
-		discardedCards.add(discarded);							
+	public void returnCard(PlayingCard discarded){	
+		if(discarded != null){
+			discardedCards.add(discarded);	
+		}
 	}
 
 	public static void main(String[] args) {					
