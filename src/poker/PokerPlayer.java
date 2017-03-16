@@ -52,8 +52,6 @@ public class PokerPlayer {
 				int discardThreshold = random.nextInt(MAX_PROBABILITY);
 				
 				if(discardProbability <= discardThreshold){
-					
-					
 					cardsToDiscardIndexArray.add(index);
 				}
 				
@@ -82,11 +80,16 @@ public class PokerPlayer {
 	public static void main(String[] args) {
 		DeckOfCards deckOfCards = new DeckOfCards();
 		deckOfCards.shuffle();
-		PokerPlayer player = new PokerPlayer(deckOfCards);
 		
-		System.out.println(player.handOfCards.toString());
-		player.discard();
-		System.out.println(player.handOfCards.toString());
-		
+		int numberOfPlayers = 5;
+		for (int i = 0; i < numberOfPlayers; i++) {
+			PokerPlayer player = new PokerPlayer(deckOfCards);
+			System.out.println("Player " + (i + 1));
+			System.out.println(player.handOfCards.toString());
+			player.discard();
+			System.out.println(player.handOfCards.toString());	
+			System.out.println();
+		}
+
 	}
 }

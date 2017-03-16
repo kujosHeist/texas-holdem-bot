@@ -53,7 +53,7 @@ public class DeckOfCards {
 	// deals next card from the deck based on the nextCardIndex pointer,
 	// then decrements the pointer, original card remains in deck array but can't be dealt again
 	// includes a check that pointer has not gone below zero, returning null if it has
-	public PlayingCard dealNext(){								
+	public synchronized PlayingCard dealNext(){								
 		if(nextCardIndex < 0){									
 			return null;										
 		}else{													
