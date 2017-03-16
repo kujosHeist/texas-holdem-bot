@@ -26,16 +26,10 @@ public class HandOfCards {
 	public static int ROYAL_FLUSH_DEFAULT = Type.RoyalFlush.ordinal() * DEFAULT_HAND_VALUE;		
 	
 	public static int CARDS_PER_HAND = 5;
-	
 	private static int HIGH_CARD_INDEX = 0;
-	private static int LOW_CARD_INDEX = 4;
 	
-	private static int SUITS_IN_DECK = 4;
-	
-	
-	
-	private static int KEEP = 0;
-	private static int DISCARD = 100;
+	public static int KEEP = 0;
+	public static int DISCARD = 100;
 	
 	private static int TYPES_OF_CARD = 13; // A 2 3 ... J Q K
 	private static int FALSE = -1;
@@ -71,8 +65,21 @@ public class HandOfCards {
 		return deckOfCards;
 	}
 	
+	
+	// returns a card from the hand
+	public PlayingCard returnCard(int index){
+		PlayingCard card = cards[index];
+		cards[index] = null;
+		return card;
+		
+	}
+	
+	public PlayingCard getCard(int index){
+		return cards[index];
+	}
+	
 	// based on bubble sort, this method orders the cards from highest to lowest based on game value
-	private void sort(){
+	public void sort(){
 		boolean sorted = false;   
 		
 		// keeps looping until cards in in correct order
@@ -1024,5 +1031,13 @@ public class HandOfCards {
 			}	
 		}
 		return typeOfHandFlag;
+	}
+
+	public void receiveCard(PlayingCard card) {
+		for (int i = 0; i < cards.length; i++) {
+			if(cards[i] == null){
+				cards[i] = card;
+			}
+		}
 	}		
 }
