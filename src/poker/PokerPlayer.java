@@ -22,7 +22,7 @@ public class PokerPlayer {
 	
 	public int discard(){
 
-		ArrayList<PlayingCard> cardsDiscarded = new ArrayList<PlayingCard>();
+		ArrayList<Integer> cardsToDiscardIndexArray = new ArrayList<Integer>();
 		HashMap<Integer, Integer> possibleDiscards = new HashMap<Integer, Integer>();		
 		
 		boolean noDefiniteCardsToDiscard = true; 
@@ -32,12 +32,8 @@ public class PokerPlayer {
 			
 			if(discardProbability == handOfCards.KEEP){
 				continue;
-			}else if(discardProbability == handOfCards.DISCARD && cardsDiscarded.size() < MAX_CARDS_TO_DISCARD){
-				
-				PlayingCard discardCard = handOfCards.returnCard(index);
-				deckOfCards.returnCard(discardCard);
-				cardsDiscarded.add(discardCard);
-				
+			}else if(discardProbability == handOfCards.DISCARD && cardsToDiscardIndexArray.size() < MAX_CARDS_TO_DISCARD){
+				cardsToDiscardIndexArray.add(index);
 				noDefiniteCardsToDiscard = false;
 			}else{
 				possibleDiscards.put(index, discardProbability);
@@ -46,43 +42,51 @@ public class PokerPlayer {
 		
 		Random random = new Random();
 		
-		if(noDefiniteCardsToDiscard && cardsDiscarded.size() < MAX_CARDS_TO_DISCARD){
+		if(noDefiniteCardsToDiscard && cardsToDiscardIndexArray.size() < MAX_CARDS_TO_DISCARD){
 			
 			for(Integer index: possibleDiscards.keySet()){
-				int probabilityMultiplier = MAX_CARDS_TO_DISCARD - cardsDiscarded.size(); 
+				int probabilityMultiplier = MAX_CARDS_TO_DISCARD - cardsToDiscardIndexArray.size(); 
 				
 				int discardProbability = possibleDiscards.get(index) * probabilityMultiplier;
 				
 				int discardThreshold = random.nextInt(MAX_PROBABILITY);
 				
 				if(discardProbability <= discardThreshold){
-					PlayingCard discardCard = handOfCards.returnCard(index);
-					deckOfCards.returnCard(discardCard);
-					cardsDiscarded.add(discardCard);
+					
+					
+					cardsToDiscardIndexArray.add(index);
 				}
 				
-				if(cardsDiscarded.size() == MAX_CARDS_TO_DISCARD){
+				if(cardsToDiscardIndexArray.size() == MAX_CARDS_TO_DISCARD){
 					break;
 				}
 				
 			}
 		}
 		
+		
+		// swap out cards
 		System.out.print("Dicarding cards: ");
-		for(PlayingCard card: cardsDiscarded){
+		for(Integer cardIndex: cardsToDiscardIndexArray){
+			PlayingCard card = handOfCards.returnCard(cardIndex);
 			System.out.print(card.toString() + " ");
+			deckOfCards.returnCard(card);
+			handOfCards.receiveCard(deckOfCards.dealNext());
 		}
 		System.out.println();
-		
-		for (int i = 0; i < cardsDiscarded.size(); i++) {
-			PlayingCard card = deckOfCards.dealNext();
-			handOfCards.receiveCard(card);
-		}
-		
 		handOfCards.sort();
 		
-		return cardsDiscarded.size();
+		return cardsToDiscardIndexArray.size();
 	}
 	
-
+	public static void main(String[] args) {
+		DeckOfCards deckOfCards = new DeckOfCards();
+		deckOfCards.shuffle();
+		PokerPlayer player = new PokerPlayer(deckOfCards);
+		
+		System.out.println(player.handOfCards.toString());
+		player.discard();
+		System.out.println(player.handOfCards.toString());
+		
+	}
 }
